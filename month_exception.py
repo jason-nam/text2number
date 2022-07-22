@@ -55,13 +55,13 @@ def find_month_exception(txt):
 
 if __name__ == "__main__":
     
-    # txt = '그 겨울이 지나 이월 말경 다시 학교로 가 졸업식을 치렀다.'
-    # print(pos.get_pos(txt))
-    # print(find_month_exception(txt))
+    txt = '그 겨울이 지나 이월 말경 다시 학교로 가 졸업식을 치렀다.'
+    print(pos.get_pos(txt))
+    print(find_month_exception(txt))
 
-    # txt = '기상청에서는 올 이월에도 꽃샘추위가 몇 차례 찾아올 것이라고 전망하였다'
-    # print(pos.get_pos(txt))
-    # print(find_month_exception(txt))
+    txt = '기상청에서는 올 이월에도 꽃샘추위가 몇 차례 찾아올 것이라고 전망하였다'
+    print(pos.get_pos(txt))
+    print(find_month_exception(txt))
 
     txt = '저희 회사는 이월에 이월합니다.'
     print(pos.get_pos(txt))
