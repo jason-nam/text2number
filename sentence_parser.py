@@ -1,5 +1,6 @@
 #with 문장분리기
 from ast import Num
+from calendar import month
 from doctest import OutputChecker
 from re import M
 from eunjeon import Mecab
@@ -12,6 +13,7 @@ import text_to_num as tn
 from kss import split_sentences
 import pattern_language as re
 import tag_correction as tag_correction
+import month_exception
 
 m = Mecab()
 """
@@ -225,8 +227,9 @@ def main(sentence: str) -> str:
         str = ''
         for aa in filter1[i]:
             str += aa
+        str = month_exception.find_month_exception(str)
         return str
 
-print(re.apply_regular_expression(put_number("성원이 되었으므로 제삼백칠십구 회 국회임시회 제일 차 문화체육관광위원회를 개의하겠습니다.")))
+
 
 

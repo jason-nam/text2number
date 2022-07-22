@@ -1,9 +1,5 @@
 #정규표현식 연습
 import re
-
-import os
-import sys
-#sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname("C:\\Users\\juna2\\text2number\\"))))
 import text_to_num as tn
 
 
@@ -17,7 +13,7 @@ def apply_regular_expression(sentence: str) -> str:
         if regexp.search(sentence):
             while regexp.findall(sentence) != []:
                 pattern_in_sentence = regexp.findall(sentence)
-                print(pattern_in_sentence)         
+                # print(pattern_in_sentence)         
                 for inst in pattern_in_sentence:
                     if isinstance(inst, tuple):
                         num_text = inst[0]
@@ -33,7 +29,3 @@ def apply_regular_expression(sentence: str) -> str:
             for inst in correction_in_sentnece:
                 sentence = sentence.replace(inst,regex_text[1])
     return sentence
-
-
-print(apply_regular_expression("성원이 되었으므로 제삼백칠십구 회 국회임시회 제일 차 문화체육관광위원회를 개의하겠습니다."))
-

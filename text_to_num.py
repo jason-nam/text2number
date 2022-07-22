@@ -1,7 +1,7 @@
 #from xml.etree.ElementTree import TreeBuilderng
 #[300,4,10] - >340 str
 from typing import List, Dict
-import pos
+from pos import get_pos
 import tag_correction
 
 NUMBER: Dict[str, int] = {
@@ -56,9 +56,6 @@ def split_num(txt):
         if not check: 
             split_number.append(character)
     return split_number
-
-def get_pos(sentence):
-    return pos.get_pos(sentence)
         
 def get(ha):
     list1=[]
