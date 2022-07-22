@@ -207,17 +207,22 @@ out_file3.close()
 def main(sentence: str) -> str:
     sentence=ud.apply_dictionary(sentence)
     sentence=re.apply_regular_expression(put_number(sentence))
-    temp_list = [[sentence]]
+    temp_list = [sentence]
+    temp_list = split_list(temp_list)
     temp_list = no_space_list(temp_list)
     filter1=[]
     for a in temp_list:
         temp =[]
         for aa in a:
-            b =spell_checker.check(u''+put_number(aa))
-            c = b.checked
-            temp.append(c)
+            d=ud.apply_dictionary(aa)
+            c=re.apply_regular_expression(put_number(d))
+            d =spell_checker.check(u''+put_number(c))
+            e = d.checked
+            temp.append(e)
         #print(b.checked)
         filter1.append(temp)
     for i in range(len(temp_list)):
+        str = ''
         for aa in filter1[i]:
-            return (filter1[i][0])
+            str += aa
+        return str
