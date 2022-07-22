@@ -1,8 +1,14 @@
 #정규표현식 연습
 import re
+
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname("C:\\Users\\juna2\\text2number\\"))))
 import text_to_num as tn
+
+
 #NR처리할 부분의 group이름은 항상 change로!!
-regex_num_dictionary = ['점(?P<change>[가-힣0-9\s]+)프로','제(?P<change>[가-힣0-9\s]+)(\s)*(항|목|차관|조항|항목|관)']
+regex_num_dictionary = ['점(?P<change>[가-힣0-9\s]+)프로','제(?P<change>[가-힣0-9\s]+)(\s)*(항|목|차관|조항|항목|관|회)']
 regex_text_correction = [('[0-9\s](?P<dot>[점\s]+)[0-9]',"."),('[0-9](?P<dot>[\.\s]+)[0-9]',".")]
 
 def apply_regular_expression(sentence: str) -> str:
@@ -25,3 +31,7 @@ def apply_regular_expression(sentence: str) -> str:
             for inst in correction_in_sentnece:
                 sentence = sentence.replace(inst,regex_text[1])
     return sentence
+    
+print(apply_regular_expression("성원이 되었으므로 제삼백칠십구 회 국회임시회 제일 차 문화체육관광위원회를 개의하겠습니다."))
+
+

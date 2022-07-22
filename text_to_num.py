@@ -2,7 +2,7 @@
 #[300,4,10] - >340 str
 from typing import List, Dict
 import pos
-import exceptions.tag_correction
+import tag_correction
 
 NUMBER: Dict[str, int] = {
     "일": 1,

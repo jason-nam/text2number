@@ -6,12 +6,12 @@ from eunjeon import Mecab
 import json
 
 #from numpy import _2Tuple
-import exceptions.new_language as ud
+import new_language as ud
 from hanspell import spell_checker
 import text_to_num as tn
 from kss import split_sentences
-import exceptions.pattern_language as re
-import exceptions.tag_correction as tag_correction
+import pattern_language as re
+import tag_correction as tag_correction
 
 m = Mecab()
 """
@@ -226,3 +226,7 @@ def main(sentence: str) -> str:
         for aa in filter1[i]:
             str += aa
         return str
+
+print(re.apply_regular_expression(put_number("성원이 되었으므로 제삼백칠십구 회 국회임시회 제일 차 문화체육관광위원회를 개의하겠습니다.")))
+
+
