@@ -1,10 +1,6 @@
 #with 문장분리기
-from ast import Num
-from calendar import month
-from doctest import OutputChecker
 from re import M
-from eunjeon import Mecab
-import json
+import pos
 
 #from numpy import _2Tuple
 import new_language as ud
@@ -15,7 +11,6 @@ import pattern_language as re
 import tag_correction as tag_correction
 import month_exception
 
-m = Mecab()
 """
 with open("3CS01_2137901_20200629_01.json",'r', encoding="UTF-8") as json_file:
     a = json.load(json_file)
@@ -80,9 +75,9 @@ def cut_line_list(list1):
 
 #print(cut_line_list(list1))
 
-def show_pos(sentence):
-    a = m.pos(sentence)
-    return a
+# def show_pos(sentence):
+#     a = m.pos(sentence)
+#     return a
 #print(list4)
 #이번 사건에서 2번 사건에서
 #str인 문장을 넣어서 여기서 숫자들만 가져오는 함수
@@ -233,3 +228,18 @@ def main(sentence: str) -> str:
 
 
 
+# txt = '그 겨울이 지나 이월 말경 다시 학교로 가 졸업식을 치렀다.'
+# # print(pos.get_pos(txt))
+# print(main(txt))
+
+# txt = '기상청에서는 올 이월에도 꽃샘추위가 몇 차례 찾아올 것이라고 전망하였다'
+# # print(pos.get_pos(txt))
+# print(main(txt))
+
+# txt = '저희 회사는 이월에 이월합니다.'
+# # print(pos.get_pos(txt))
+# print(main(txt))
+
+# txt = '오늘은 이월 30일 입니다.'
+# # print(pos.get_pos(txt))
+# print(main(txt))

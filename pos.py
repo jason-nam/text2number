@@ -1,4 +1,7 @@
-from eunjeon import Mecab
+try:
+    from konlpy.tag import Mecab
+except:
+    from eunjeon import Mecab
 
 mecab = Mecab()
 
