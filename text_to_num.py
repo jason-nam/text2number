@@ -2,9 +2,10 @@
 #[300,4,10] - >340 str
 from typing import List, Dict
 from pos import get_pos
-import tag_correction
 
 NUMBER: Dict[str, int] = {
+    "공":0,
+    "영":0,
     "일": 1,
     "이":2,
     "삼":3,
@@ -17,8 +18,6 @@ NUMBER: Dict[str, int] = {
     "십":10,
     "백":100,
     "천":1000,
-    "공":0,
-    "영":0,
 }
 
 

@@ -4,7 +4,7 @@ import text_to_num as tn
 
 
 #NR처리할 부분의 group이름은 항상 change로!!
-regex_num_dictionary = ['점(?P<change>[가-힣0-9\s]+)프로','제(?P<change>[가-힣]+)(\s)*(항|목|차관|조항|항목|관|회|차)']
+regex_num_dictionary = ['점(?P<change>[가-힣0-9\s]+)프로','제(?P<change>[가-힣]+)(\s)*(항|조|목|차관|조항|항목|관|회|차)']
 regex_text_correction = [('[0-9\s](?P<dot>[점\s]+)[0-9]',"."),('[0-9](?P<dot>[\.\s]+)[0-9]',".")]
 
 def apply_regular_expression(sentence: str) -> str:
@@ -29,3 +29,6 @@ def apply_regular_expression(sentence: str) -> str:
             for inst in correction_in_sentnece:
                 sentence = sentence.replace(inst,regex_text[1])
     return sentence
+
+if __name__ == "__main__":
+    print(apply_regular_expression('제육 조 제이십사 항을 참고바랍니다.'))
