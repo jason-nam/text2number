@@ -135,13 +135,13 @@ def main(sentence: str) -> str:
     """worker function"""
 
     sentence=new_language.apply_dictionary(sentence)
-    print('1:',sentence)
+    # print('1:',sentence)
     sentence = PutNumber(sentence)
-    print('2:',sentence)
+    # print('2:',sentence)
     sentence=pattern_language.apply_regular_expression(sentence)
-    print('3:',sentence)
+    # print('3:',sentence)
     sentence=month_exception.get_month_exception(sentence)
-    print('4:',sentence)
+    # print('4:',sentence)
     return sentence
 
 # print(main("나는 이번 유 일 사일에 본 시험에서 영점 사점을 받았어."))
