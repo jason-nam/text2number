@@ -1,5 +1,5 @@
 from typing import List, Dict
-import pos
+
 
 NUMBER: Dict[str, int] = {
     "공":0,
