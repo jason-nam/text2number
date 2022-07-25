@@ -56,7 +56,7 @@ def exceptionNR(nr_list: list) -> list:
     """
 
     copy = nr_list
-    list_nr_but_no = text_to_list.TextIntoList("exception_nr.txt")
+    list_nr_but_no = text_to_list.TextIntoList("./exception_nr.txt")
     for ind, each_nr in enumerate(nr_list):
         if each_nr != ():
             for exception in list_nr_but_no:
@@ -122,9 +122,9 @@ def PutNumber(sentence: str) -> str:
 def main(sentence: str) -> str:
     """worker function"""
 
-    sentence=new_language.apply_dictionary(sentence) 
+    sentence=new_language.apply_dictionary(sentence)
     sentence = PutNumber(sentence)
-    sentence=pattern_language.apply_regular_expression(sentence) 
+    sentence=pattern_language.apply_regular_expression(sentence)
     sentence=month_exception.get_month_exception(sentence)
     return sentence
 
