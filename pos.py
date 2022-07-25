@@ -14,7 +14,6 @@ def get_morphs(txt):
 if __name__ == "__main__":
     txt = "2번 3 회 추경예산안은 고용 사회안전망 강화와 경기 보강을 위해서."
     print(get_pos(txt))
-    
-#이번
-#백제
-#~
+
+    txt = "나는 코로나 일구에 감염됬었어"
+    print(get_pos(txt))

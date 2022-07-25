@@ -3,6 +3,7 @@ from typing  import Dict
 
 DICTIONARY: Dict[str, str] = {
     "코로나일구" : "코로나19",
+    "코로나 일구" : "코로나19",
     "이공삼공" : "2030",
     "육이오" : "6.25",
     "삼일절" : "3.1절",

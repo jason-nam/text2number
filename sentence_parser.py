@@ -48,7 +48,7 @@ import text_to_list
 
 def exceptionNR(nr_list: list) -> list:
     """
-    
+    실제로 NR이지만 처리과정에서 그냥 digit으로 변환하지 않고 한글 그대로 출력
     """
 
     copy = nr_list
@@ -63,7 +63,7 @@ def exceptionNR(nr_list: list) -> list:
 
 def BringNumber(sentence: str) -> list:
     """
-    
+    문장에서 NR숫자들을 element로 가지는 list를 반환
     """
 
     #list1 = tn.checkTwo(sentence)
@@ -90,7 +90,7 @@ def BringNumber(sentence: str) -> list:
 
 def PutNumber(sentence: str) -> str:
     """
-    
+    문장input에 digit대입한 문장output return
     """
     
     #numList = tn.checkTwo(sentence)
@@ -146,3 +146,4 @@ print(main("성원이 되었으므로 제삼백칠십구 회 국회임시회 제
 print(main("제육 조 제이십사 항을 참고바랍니다."))
 print(main('저희 회사는 이월에 이월합니다.'))
 print(main("그리고 백이십삼 쪽 스포츠 산업 활성화 지원 증액 부분 두 가지 부분에 대해서 질의하겠습니다 어 우선 이 두 부분은 그 야당 국회의원께서 어 지난 유월 중순에 보도 자료를 내면서 집행률이 영 점 삼 프로 내지는 팔 점 육 프로에 불과하다."))
+print(main("나는 코로나 일구에 감염됬었어"))

@@ -85,7 +85,6 @@ def FilterException(word: str) -> list:
     예외처리할 특정형태단어들 Filter
     """
 
-    bool_and_string = []
     is_exception = False
     if word[0] == '제':
         is_exception = True
