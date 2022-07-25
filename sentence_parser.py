@@ -139,11 +139,3 @@ def main(sentence: str) -> str:
     #     transformed_sentence += spell_check_sentence.checked + " "
     # return transformed_sentence[:-1]
     return sentence
-
-print(main("정부는 예산에서 육조칠천억 원을 추가한다는 발표를 했습니다."))
-print(main("제육 조 제이십사 항을 참고바랍니다. 성원이 되었으므로 제삼백칠십구 회 국회임시회 제일 차 문화체육관광위원회를 개의하겠습니다."))
-print(main("성원이 되었으므로 제삼백칠십구 회 국회임시회 제일 차 문화체육관광위원회를 개의하겠습니다."))
-print(main("제육 조 제이십사 항을 참고바랍니다."))
-print(main('저희 회사는 이월에 이월합니다.'))
-print(main("그리고 백이십삼 쪽 스포츠 산업 활성화 지원 증액 부분 두 가지 부분에 대해서 질의하겠습니다 어 우선 이 두 부분은 그 야당 국회의원께서 어 지난 유월 중순에 보도 자료를 내면서 집행률이 영 점 삼 프로 내지는 팔 점 육 프로에 불과하다."))
-print(main("나는 코로나 일구에 감염됬었어"))
