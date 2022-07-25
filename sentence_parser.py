@@ -92,41 +92,61 @@ def BringNumber(sentence: str) -> list:
                 str = ''
     return string_list
 
+# def PutNumber(sentence: str) -> str:
+#     """
+#     문장input에 digit대입한 문장output return
+#     """
+
+#     num_list = BringNumber(sentence)
+#     copy = ''
+#     result_sentence = ''
+#     for num in num_list:
+#         len_copy = len(copy)
+#         while len_copy <= len(sentence)-1:
+#             if sentence[len_copy] != num[0]:
+#                 result_sentence += sentence[len_copy]
+#                 len_copy +=1
+#             else:
+#                 if sentence[len_copy:len_copy+len(num)] == num:
+#                     result_sentence += into_digit.ToDigit(num)
+#                     copy = sentence[0:len_copy+len(num)]
+#                     len_copy = len(sentence)
+#                 else:
+#                     result_sentence += sentence[len_copy]
+#                     len_copy +=1
+#     return result_sentence +sentence[len(copy):]
+
 def PutNumber(sentence: str) -> str:
-    """
-    문장input에 digit대입한 문장output return
-    """
+    """문장input에 digit대입한 문장output return"""
 
-    num_list = BringNumber(sentence)
-    copy = ''
-    result_sentence = ''
-    for num in num_list:
-        len_copy = len(copy)
-        while len_copy <= len(sentence)-1:
-            if sentence[len_copy] != num[0]:
-                result_sentence += sentence[len_copy]
-                len_copy +=1
-            else:
-                if sentence[len_copy:len_copy+len(num)] == num:
-                    result_sentence += into_digit.ToDigit(num)
-                    copy = sentence[0:len_copy+len(num)]
-                    len_copy = len(sentence)
-                else:
-                    result_sentence += sentence[len_copy]
-                    len_copy +=1
-    return result_sentence +sentence[len(copy):]
-
-
+    numbers = BringNumber(sentence)
+    if not all(number in sentence for number in numbers):
+        return sentence
+    for number in numbers:
+        for ind, sentence_char in enumerate(sentence):
+            if sentence_char != number[0]:
+                continue
+            if sentence[ind:min(len(sentence),ind+len(number))] == number:
+                sentence = sentence[:ind] + into_digit.ToDigit(number) + sentence[min(len(sentence),ind+len(number)):]
+    return sentence
 
 
 def main(sentence: str) -> str:
     """worker function"""
 
     sentence=new_language.apply_dictionary(sentence)
+    print('1:',sentence)
     sentence = PutNumber(sentence)
+    print('2:',sentence)
     sentence=pattern_language.apply_regular_expression(sentence)
+    print('3:',sentence)
     sentence=month_exception.get_month_exception(sentence)
+    print('4:',sentence)
     return sentence
 
-# print(main("나는 이번 유일 사일에 본 시험에서 영점 사점을 받았어."))
+# print(main("나는 이번 유 일 사일에 본 시험에서 영점 사점을 받았어."))
 # print(main("나는 이번 유월 사일에 본 시험에서 영점 사점을 받았어."))
+# print(main("나는 이번 유 일 사일에 본 시험에서 영점 사점을 받았어."))
+# print(main("이번 삼 회 추경예산안은 고용 사회안전망 강화와 경기 보강을 위해서."))
+# print(main("성원이 되었으므로 제삼백칠십구 회 국회임시회 제일 차 문화체육관광위원회를 개의하겠습니다."))
+# print(main("나는 지금 오십만육천원을 가지고 있어"))
