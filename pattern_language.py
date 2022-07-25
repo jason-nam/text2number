@@ -13,7 +13,6 @@ def apply_regular_expression(sentence: str) -> str:
         if regexp.search(sentence):
             while regexp.findall(sentence) != []:
                 pattern_in_sentence = regexp.findall(sentence)
-                # print(pattern_in_sentence)         
                 for inst in pattern_in_sentence:
                     if isinstance(inst, tuple):
                         num_text = inst[0]

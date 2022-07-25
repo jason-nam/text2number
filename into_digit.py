@@ -4,7 +4,7 @@ import pos
 NUMBER: Dict[str, int] = {
     "공":0,
     "영":0,
-    "일": 1,
+    "일":1,
     "이":2,
     "삼":3,
     "사":4,
@@ -148,4 +148,5 @@ def ToDigit(word: str) -> str:
     return into_digit
 
 
-    
+if __name__ == "__main__":
+    None

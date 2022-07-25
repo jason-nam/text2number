@@ -96,10 +96,8 @@ def PutNumber(sentence: str) -> str:
     """
     문장input에 digit대입한 문장output return
     """
-    
-    #numList = tn.checkTwo(sentence)
+
     num_list = BringNumber(sentence)
-    #print(num_list)
     copy = ''
     result_sentence = ''
     for num in num_list:
@@ -124,22 +122,11 @@ def PutNumber(sentence: str) -> str:
 def main(sentence: str) -> str:
     """worker function"""
 
-    sentence=new_language.apply_dictionary(sentence) # 
-    # print('1:',sentence)
+    sentence=new_language.apply_dictionary(sentence) 
     sentence = PutNumber(sentence)
-    # print('2:',sentence)
-    sentence=pattern_language.apply_regular_expression(sentence) #원문장 정규
-    # print('3:',sentence)
+    sentence=pattern_language.apply_regular_expression(sentence) 
     sentence=month_exception.get_month_exception(sentence)
-    # print('4:',sentence)
-    # sentence_list = split_sentences(sentence) # kss
-    # print('5:',sentence_list)
-    # sentence_list = no_space_list(sentence_list) #원문장 띄어쓰기 제거
-    # print('6:',sentence_list)
-    # transformed_sentence = ''
-    # for single_sentence in sentence_list:
-    #     print('7:',single_sentence)
-    #     spell_check_sentence =spell_checker.check(u''+put_number(new_language.apply_dictionary(single_sentence)))
-    #     transformed_sentence += spell_check_sentence.checked + " "
-    # return transformed_sentence[:-1]
     return sentence
+
+# print(main("나는 이번 유일 사일에 본 시험에서 영점 사점을 받았어."))
+# print(main("나는 이번 유월 사일에 본 시험에서 영점 사점을 받았어."))

@@ -18,3 +18,6 @@ def num_two_correction(sentence):
         else: newList.append(sen_pos[i])
     newList.append(sen_pos[len(sen_pos)-1])
     return newList
+
+if __name__ == "__main__":
+    None
