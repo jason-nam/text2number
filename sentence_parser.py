@@ -2,12 +2,16 @@
 STT
 """
 
+import sys 
+sys.path.append("./")
+
 import new_language
 import into_digit
 import pattern_language
 import tag_correction
 import month_exception
 import text_to_list
+
 
 # from hanspell import spell_checker
 # from kss import split_sentences
