@@ -4,7 +4,7 @@ import into_digit
 
 
 #NR처리할 부분의 group이름은 항상 change로!!
-regex_num_dictionary = ['점(?P<change>[가-힣\s]+)프로','제(?P<change>[가-힣]+)(\s)*(항|조|목|차관|조항|항목|관|회|차)']
+regex_num_dictionary = ['점(?P<change>[가-힣\s]+)프로','점(?P<change>[가-힣\s]+)점','제(?P<change>[가-힣]+)(\s)*(항|조|목|차관|조항|항목|관|회|차)']
 regex_text_correction = [('[0-9\s](?P<dot>[점\s]+)[0-9]',"."),('[0-9](?P<dot>[\.\s]+)[0-9]',".")]
 
 def apply_regular_expression(sentence: str) -> str:

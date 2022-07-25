@@ -139,3 +139,5 @@ def main(sentence: str) -> str:
     #     transformed_sentence += spell_check_sentence.checked + " "
     # return transformed_sentence[:-1]
     return sentence
+
+print(main("나는 이번 유일 사일에 본 시험에서 영점 사점을 받았습니다."))

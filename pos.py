@@ -17,3 +17,9 @@ if __name__ == "__main__":
 
     txt = "나는 코로나 일구에 감염됬었어"
     print(get_pos(txt))
+
+    txt = "나는 이번 유일 사일에 본 시험에서 영점 사점을 받았어"
+    print(get_pos(txt))
+
+    txt = "나는 이번 유일 사일에 본 시험에서 영점 사프로를 받았어"
+    print(get_pos(txt))
