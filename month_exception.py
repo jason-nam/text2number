@@ -55,3 +55,7 @@ if __name__ == "__main__":
     txt = '오늘은 이월 30일 입니다.'
     # print(pos.get_pos(txt))
     print(get_month_exception(txt))
+
+    txt = '오월이 찾아왔습니다.'
+    # print(pos.get_pos(txt))
+    print(get_month_exception(txt))

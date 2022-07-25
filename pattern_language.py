@@ -1,10 +1,10 @@
 #정규표현식 연습
 import re
-import text_to_num as tn
+import into_digit 
 
 
 #NR처리할 부분의 group이름은 항상 change로!!
-regex_num_dictionary = ['점(?P<change>[가-힣0-9\s]+)프로','제(?P<change>[가-힣]+)(\s)*(항|조|목|차관|조항|항목|관|회|차)']
+regex_num_dictionary = ['점(?P<change>[가-힣\s]+)프로','제(?P<change>[가-힣]+)(\s)*(항|조|목|차관|조항|항목|관|회|차)']
 regex_text_correction = [('[0-9\s](?P<dot>[점\s]+)[0-9]',"."),('[0-9](?P<dot>[\.\s]+)[0-9]',".")]
 
 def apply_regular_expression(sentence: str) -> str:
@@ -21,7 +21,7 @@ def apply_regular_expression(sentence: str) -> str:
                     else:   
                         num_text = inst.replace(" ",'')
                     #tn.get(a)가 숫자가 아니라 string으로 변환되어 나왔으면 반환하지 않게끔
-                    sentence = sentence.replace(num_text, tn.get(num_text))
+                    sentence = sentence.replace(num_text, into_digit.ToDigit(num_text))
     for regex_text in regex_text_correction:
         regexp= re.compile(regex_text[0])
         if regexp.search(sentence):

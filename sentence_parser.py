@@ -1,11 +1,16 @@
+"""
+STT
+"""
+
 import new_language
-import text_to_num
+import into_digit
 import pattern_language
 import tag_correction
 import month_exception
+import text_to_list
 
-from hanspell import spell_checker
-from kss import split_sentences
+# from hanspell import spell_checker
+# from kss import split_sentences
 
 
 # def space_all_list(list1):    
@@ -20,13 +25,13 @@ from kss import split_sentences
 #         list2.append(filtered)
 #     return list2
 
-def no_space_list(sentences: list) -> list:
-    """remove all spaces in sentences"""
+# def no_space_list(sentences: list) -> list:
+#     """remove all spaces in sentences"""
 
-    no_space_sentences = []
-    for sentence in sentences:
-        no_space_sentences.append(sentence.replace(" ",""))
-    return no_space_sentences
+#     no_space_sentences = []
+#     for sentence in sentences:
+#         no_space_sentences.append(sentence.replace(" ",""))
+#     return no_space_sentences
 
 # list4는 문장분리기를 통해 forms에서 문장을 나누고 한 forms를 list형태로 묶어서 나누어주었다.
 # def cut_line_list(list1):
@@ -41,23 +46,39 @@ def no_space_list(sentences: list) -> list:
 #     return list4
 
 
-def bring_number(sentence: str) -> list:
-    """문장을 넣어서 여기서 숫자들만 가져오는 함수"""
+def exceptionNR(nr_list: list) -> list:
+    """
+    
+    """
 
+    copy = nr_list
+    list_nr_but_no = text_to_list.TextIntoList("exception_nr.txt")
+    for ind, each_nr in enumerate(nr_list):
+        if each_nr != ():
+            for exception in list_nr_but_no:
+                if each_nr[0] == exception:
+                    null_info = ()
+                    copy[ind] = null_info
+    return copy
+
+def BringNumber(sentence: str) -> list:
+    """
+    
+    """
+
+    #list1 = tn.checkTwo(sentence)
     list1 = tag_correction.num_two_correction(sentence)
-    f = []
+    filtered_nr_list = []
     for a in list1:
         if a[1] == 'NR':
-            if a[0] == '조':
-                b=()
-                f.append(b)
-            else: f.append(a)
+            filtered_nr_list.append(a)
         else:
             b=()
-            f.append(b)
+            filtered_nr_list.append(b)
+    filtered_nr_list = exceptionNR(filtered_nr_list)
     string_list = []
     str = ''
-    for a in f:
+    for a in filtered_nr_list:
         b = ()
         if a != b:
             str += a[0]
@@ -67,47 +88,46 @@ def bring_number(sentence: str) -> list:
                 str = ''
     return string_list
 
-
-def put_number(sentence: str) -> str:
+def PutNumber(sentence: str) -> str:
     """
-    수사리스트에서 쓸수있는걸로만 바꿔주는거
-    (이게 실제로 convert하는 마지막 단계!!!!!!!)
-    실제로 대입하는 함수 return하는 값은 수사를 아라비아 숫자로 변환하여 반환한다.
+    
     """
-
-    num_list = bring_number(sentence)
+    
+    #numList = tn.checkTwo(sentence)
+    num_list = BringNumber(sentence)
+    #print(num_list)
     copy = ''
-    new = ''
-    #string일부 가져오는법 [a:b] a에서 b-1위치까지 가져온다.
-    #a is an index value
+    result_sentence = ''
     for num in num_list:
         len_copy = len(copy)
         while len_copy <= len(sentence)-1:
             if sentence[len_copy] != num[0]:
-                new += sentence[len_copy]
+                result_sentence += sentence[len_copy]
                 len_copy +=1
             else:
                 if sentence[len_copy:len_copy+len(num)] == num:
-                    new += text_to_num.get(num)
+                    result_sentence += into_digit.ToDigit(num)
                     copy = sentence[0:len_copy+len(num)]
                     len_copy = len(sentence)
                 else:
-                    new += sentence[len_copy]
+                    result_sentence += sentence[len_copy]
                     len_copy +=1
-    return new +sentence[len(copy):]
+    return result_sentence +sentence[len(copy):]
+
+
 
 
 def main(sentence: str) -> str:
     """worker function"""
 
     sentence=new_language.apply_dictionary(sentence) # 
-    print('1:',sentence)
-    sentence = put_number(sentence)
-    print('2:',sentence)
+    # print('1:',sentence)
+    sentence = PutNumber(sentence)
+    # print('2:',sentence)
     sentence=pattern_language.apply_regular_expression(sentence) #원문장 정규
-    print('3:',sentence)
+    # print('3:',sentence)
     sentence=month_exception.get_month_exception(sentence)
-    print('4:',sentence)
+    # print('4:',sentence)
     # sentence_list = split_sentences(sentence) # kss
     # print('5:',sentence_list)
     # sentence_list = no_space_list(sentence_list) #원문장 띄어쓰기 제거
@@ -125,4 +145,4 @@ print(main("제육 조 제이십사 항을 참고바랍니다. 성원이 되었�
 print(main("성원이 되었으므로 제삼백칠십구 회 국회임시회 제일 차 문화체육관광위원회를 개의하겠습니다."))
 print(main("제육 조 제이십사 항을 참고바랍니다."))
 print(main('저희 회사는 이월에 이월합니다.'))
-# print(main("그리고 백이십삼 쪽 스포츠 산업 활성화 지원 증액 부분 두 가지 부분에 대해서 질의하겠습니다 어 우선 이 두 부분은 그 야당 국회의원께서 어 지난 유월 중순에 보도 자료를 내면서 집행률이 영 점 삼 프로 내지는 팔 점 육 프로에 불과하다."))
+print(main("그리고 백이십삼 쪽 스포츠 산업 활성화 지원 증액 부분 두 가지 부분에 대해서 질의하겠습니다 어 우선 이 두 부분은 그 야당 국회의원께서 어 지난 유월 중순에 보도 자료를 내면서 집행률이 영 점 삼 프로 내지는 팔 점 육 프로에 불과하다."))

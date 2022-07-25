@@ -12,4 +12,9 @@ def get_morphs(txt):
     return mecab.morphs(txt)
 
 if __name__ == "__main__":
-    None
+    txt = "2번 3 회 추경예산안은 고용 사회안전망 강화와 경기 보강을 위해서."
+    print(get_pos(txt))
+    
+#이번
+#백제
+#~
