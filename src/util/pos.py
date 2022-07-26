@@ -24,4 +24,4 @@ if __name__ == "__main__":
     txt = "내 전화번호는 공일공 팔육사육 오오오일"
     print(get_pos(txt))
 
-    print(get_pos('삼삼오오 모인 자리에 축제가 일어났다.'))
+    print(get_pos("조금이라도 관심을 갖고 십이월 8 일 날 접수하고 유월 26 일 이전에"))

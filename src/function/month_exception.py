@@ -27,15 +27,18 @@ def get_month_exception(txt: str) -> str:
     if not any(month in txt for month in MONTHS):
         return txt
     txt_pos = pos.get_pos(txt)
+    months_count = 0
     for month in MONTHS:
         for ind, key in enumerate(txt_pos):
             try:
                 if key[0] == month and any(txt_pos[ind+1][1].startswith(exception_tag) for exception_tag in EXCEPTION_TAGS):
-                    txt_ind =  transform_index.get_txt_ind(txt, ind)
+                    txt_ind =  transform_index.get_txt_ind(txt, ind+months_count)
                     txt = txt[:txt_ind] + txt[txt_ind:txt_ind+len(MONTHS[month])].replace(month, MONTHS[month]) + txt[txt_ind+len(MONTHS[month]):]
+                    months_count += 1
                 elif key[0] == month and any(txt_pos[ind+1][0].startswith(exception_key) for exception_key in EXCEPTION_KEYS):
-                    txt_ind = transform_index.get_txt_ind(txt, ind)
+                    txt_ind = transform_index.get_txt_ind(txt, ind+months_count)
                     txt = txt[:txt_ind] + txt[txt_ind:txt_ind+len(MONTHS[month])].replace(month, MONTHS[month]) + txt[txt_ind+len(MONTHS[month]):]
+                    months_count += 1
             except:
                 pass
     return txt
