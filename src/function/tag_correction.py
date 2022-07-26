@@ -6,8 +6,11 @@ UNITS = ["일", "이", "삼", "사", "오", "육", "칠", "팔", "구",]
 
 def subject_case_marker(sentence:str, sentence_pos: list) -> list:
     for pos_ind, pos_key in enumerate(sentence_pos):
-        if pos_key[0] in UNITS and pos_key[1] == "JKS" and sentence_pos[pos_ind+1][1] == "NR" and sentence[transform_index.get_txt_ind(sentence, pos_ind)-1] == " ":
-            sentence_pos[pos_ind] = (pos_key[0], "NR")
+        try:
+            if pos_key[0] in UNITS and pos_key[1] == "JKS" and sentence_pos[pos_ind+1][1] == "NR" and sentence[transform_index.get_txt_ind(sentence, pos_ind)-1] == " ":
+                sentence_pos[pos_ind] = (pos_key[0], "NR")
+        except:
+            pass
     return sentence_pos
 
 

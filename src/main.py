@@ -12,7 +12,6 @@ def main(sentence: str) -> str:
 
 if __name__ == '__main__':
 
-
-    input_text = '우리는 삼삼오오 모였다.'
+    input_text = "그러나 야당은 일하는 국회를 좌초시키고 코로나일구로 어려움을 겪고 있는 민생을 뒤로 하고 있습니다."
     output_text = main(input_text)
     print(output_text)
