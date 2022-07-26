@@ -1,6 +1,6 @@
 import pos
 
-def get_txt_ind(txt, ind_pos):
+def get_txt_ind(txt: str, ind_pos: int) -> int:
     txt_morph = pos.get_morphs(txt)
     txt_word = txt.split()
     pos_char_count = 0
@@ -17,7 +17,7 @@ def get_txt_ind(txt, ind_pos):
                 ind_txt = pos_char_count+ind+1
     return ind_txt
 
-def get_pos_ind(txt, ind_txt):
+def get_pos_ind(txt: str, ind_txt: int) -> int:
     txt_morph = pos.get_morphs(txt)
     txt_word = txt[:ind_txt+1].split()
     pos_char_count = 0
