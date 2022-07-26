@@ -11,7 +11,7 @@ REGEX_NUMBERS = [
 ]
 
 REGEX_TEXT_CORRECTIONS: Dict[str, str] = {
-    '[0-9\s]([점]\s+)[0-9]': ".",
+    '[0-9\s](\s*[점]\s+)[0-9]': ".",
     # ('[0-9]([\.\s]+)[0-9]',"."),
 }
 
