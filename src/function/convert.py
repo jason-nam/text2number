@@ -28,10 +28,15 @@ NUMBERS.update(UNITS)
 NUMBERS.update(ZEROS)
 
 
+EXCEPTIONS = ["일곱"]
+
+
 def get_number(word):
     current_num = 0
     num = 0
     result = ''
+    if any(exception in word for exception in EXCEPTIONS):
+        return word
     for char in word:
         if char in NUMBERS:
             digit = int(NUMBERS[char])
