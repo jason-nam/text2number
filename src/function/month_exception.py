@@ -1,3 +1,6 @@
+# import sys
+# sys.path.append("../")
+
 from util import pos, transform_index
 from typing import Dict
 
@@ -61,6 +64,6 @@ if __name__ == "__main__":
     # print(pos.get_pos(txt))
     print(get_month_exception(txt))
 
-    txt = '오월이 찾아왔습니다.'
+    txt = '지난 사월 이십팔 일 총 80한 건의'
     # print(pos.get_pos(txt))
     print(get_month_exception(txt))

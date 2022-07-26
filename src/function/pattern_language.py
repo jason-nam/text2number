@@ -6,7 +6,7 @@ from typing import Dict
 REGEX_NUMBERS = [
     '([가-힣|0-9]+)\s*점\s*[가-힣|0-9]+\s*(프로|점|퍼센트|그람|킬로)',
     '[가-힣|0-9]+\s*점\s*([가-힣|0-9]+)\s*(프로|점|퍼센트|그람|킬로)',
-    '제([가-힣]+)\s*[항|조|목|차관|조항|항목|관|회|차]',
+    '제([가-힣]+)\s*[항|조|목|차관|조항|항목|관|회|차|법안심사]',
 ]
 
 
@@ -20,6 +20,7 @@ def apply_regular_expression(sentence: str) -> str:
         re_iter = re.finditer(regex_num, sentence)
         for s in re_iter:
             sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), convert.get_number(s.group(1))) + sentence[s.end():]
+
     for regex_text in REGEX_TEXT_CORRECTIONS:
         re_iter_text = re.finditer(regex_text, sentence)
         for s in re_iter_text:

@@ -14,7 +14,8 @@ def get_txt_ind(txt: str, ind_pos: int) -> int:
         for char in word:
             word_char_count += 1
             if word_char_count == pos_char_count:
-                ind_txt = pos_char_count+ind+1
+                ind_txt = pos_char_count+ind +1
+                break
     return ind_txt
 
 def get_pos_ind(txt: str, ind_txt: int) -> int:

@@ -26,6 +26,7 @@ def PutNumber(sentence: str) -> str:
     """문장input에 digit대입한 문장output return"""
 
     numbers = bad_words.remove_bad_words(BringNumber(sentence))
+
     if not any(number in sentence for number in numbers):
         return sentence
     for number in numbers:
