@@ -2,27 +2,14 @@ from util import *
 
 UNITS = ["일", "이", "삼", "사", "오", "육", "칠", "팔", "구",]
 
-# """#3번째에 오는게 띄워쓰기가 어디서 확인해야되는지 정보 0이면 앞, no matter인 경우 -1
-# """
-# #[key, text with key, space placement in text, list with key]
-# list = [
-#     ["백", "백제", 1, [('백','NR'),('제','')]],
-#     ["일", "한일", -1, [("한", "MM"), ("일", "NR")]],
-
-# ]
-
-# '''
-# def fixing_all_in_one(sentence, sentence_pos):
-#     filtered_pos = sentence_pos
-#     for pair in list:
-#         ind_to_change = -1
-#         if pair[0][1] == 'NR':
-#             ind_to_change = 0
-#         elif pair[1][1] == 'NR':
-#             ind_to_change =1
-#         for ind in range(1,len(sentence_pos)):
-#             if sentence_pos[ind][0]==pair[1][]
-# '''
+def resolve_mecab_version_issues(sentence_pos):
+    for sentence_pos_index, sentence_pos_element in enumerate(sentence_pos[1:-1], start=1):
+        if not sentence_pos_element[1] == "NR":
+            continue
+        else:
+            if all(front_back_pos_element in ["NNG", "NNP"] for front_back_pos_element in [sentence_pos[sentence_pos_index-1][1], sentence_pos[sentence_pos_index+1][1]]):
+                sentence_pos[sentence_pos_index] = (sentence_pos_element[0], "NONO")
+    return sentence_pos
 
 def get_text_ind(sentence, ind_pos):
     txt_morph = get_morphs(sentence)
@@ -99,16 +86,20 @@ def fixing_per_person(sentence_pos):
 
 def apply_tag_correction(sentence: str) -> list:
     sentence_pos = get_pos(sentence)
+
+    sentence_pos = resolve_mecab_version_issues(sentence_pos)
     sentence_pos = subject_case_marker(sentence, sentence_pos)
     sentence_pos = fixing_NR_after_MM(sentence_pos)
     sentence_pos = fixing_NR_after_NNB(sentence_pos)
     sentence_pos = fixing_per_person(sentence_pos)
     sentence_pos = fixing_BaekJe(sentence, sentence_pos)
     sentence_pos = fixing_Han_Il(sentence, sentence_pos)
+    
     return sentence_pos
 
 
 if __name__ == "__main__":
     txt = "이 사업은 계획이 변경 이천이십 년 사월 십칠일에 나왔다."
+    txt = "사업체를 가지고 있어."
     print(apply_tag_correction("나는 팔 쪽에서 가져왔다."))
     print(apply_tag_correction(txt))
