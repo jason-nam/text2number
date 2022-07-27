@@ -1,12 +1,26 @@
 from function import tag_correction, convert, bad_words
 from util import transform_index
 
+def exceptionNR(nr_list: list):
+    copy = nr_list
+    list_nr_but_no = [
+        '하나','둘','셋','넷','다섯','여섯','일곱','여덟','아홉','열',
+        '수십','수백','수천','수만','수억'
+    ]
+    for ind, each_nr in enumerate(nr_list):
+        if each_nr != ():
+            for exception in list_nr_but_no:
+                if each_nr[0] == exception:
+                    null_info = (each_nr[0],'')
+                    copy[ind] = null_info
+    return copy
 
 
 def BringNumber(sentence: str) -> list:
     """문장에서 NR숫자들을 element로 가지는 list를 반환"""
 
     sentence_pos = tag_correction.apply_tag_correction(sentence)
+    sentence_pos = exceptionNR(sentence_pos)
     numbers = []
     number = ""
     for ind, key in enumerate(sentence_pos):

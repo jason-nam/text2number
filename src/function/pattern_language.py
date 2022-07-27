@@ -3,20 +3,31 @@ import re
 from typing import Dict
 
 
-REGEX_NUMBERS = [
+REGEX_NUMBERS_AFTER_CONVERT = [
     '([가-힣|0-9]+)\s*점\s*[가-힣|0-9]+\s*(프로|점|퍼센트|그람|킬로)',
     '[가-힣|0-9]+\s*점\s*([가-힣|0-9]+)\s*(프로|점|퍼센트|그람|킬로)',
     '제([가-힣]+)\s*[항|조|목|차관|조항|항목|관|회|차|법안심사]',
 ]
 
+REGEX_NUMBERS_BEFORE_CONVERT = [
+    '[가-힣|0-9]+\s*월\s*([가-힣|0-9]+[일]*)\s*(일+)',
+    '[가-힣|0-9]+\s*년\s*([가-힣|0-9]+[일]*)\s*(일+)'
+]
 
 REGEX_TEXT_CORRECTIONS: Dict[str, str] = {
     '[0-9\s](\s*[점]\s+)[0-9]': ".",
 }
 
+def apply_regular_expression_before_convert(sentence):
+    for regex_num in REGEX_NUMBERS_BEFORE_CONVERT:
+        # regexp = re.compile(regex_num)
+        re_iter = re.finditer(regex_num, sentence)
+        for s in re_iter:
+            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), convert.get_number(s.group(1))) + sentence[s.end():]
+    return sentence
 
 def apply_regular_expression(sentence: str) -> str:
-    for regex_num in REGEX_NUMBERS:
+    for regex_num in REGEX_NUMBERS_AFTER_CONVERT:
         re_iter = re.finditer(regex_num, sentence)
         for s in re_iter:
             sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), convert.get_number(s.group(1))) + sentence[s.end():]

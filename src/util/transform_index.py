@@ -18,6 +18,21 @@ def get_txt_ind(txt: str, ind_pos: int) -> int:
                 break
     return ind_txt
 
+# def get_text_ind(sentence, ind_pos):
+#     txt_morph = pos.get_morphs(sentence)
+#     ind_in_sentence =0
+#     copy = sentence[ind_in_sentence:]
+#     #print(txt_morph)
+#     for ind, morph in enumerate(txt_morph):
+#         while copy[0] ==' ':
+#             ind_in_sentence += 1
+#             copy = sentence[ind_in_sentence]
+#         if ind == ind_pos:
+#             return ind_in_sentence
+#         else:
+#             ind_in_sentence += len(morph)
+#             copy = sentence[ind_in_sentence:]
+
 def get_pos_ind(txt: str, ind_txt: int) -> int:
     txt_morph = pos.get_morphs(txt)
     txt_word = txt[:ind_txt+1].split()
