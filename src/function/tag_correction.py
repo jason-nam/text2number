@@ -60,6 +60,21 @@ def fixing_BaekJe(sentence, sentence_pos):
                 filtered_pos[ind-1] = (filtered_pos[ind-1][0],'NR_NULL')
     return filtered_pos
 
+def fixing_Baek_Bum(sentence, sentence_pos):
+    filtered_pos = sentence_pos
+    for ind in  range(1,len(sentence_pos)):
+        if sentence_pos[ind] != () and sentence_pos[ind-1] != ():
+            if sentence_pos[ind] == ('범', "NNBC"):
+                for index_temp in range(ind-1,1, -1):
+                    if(sentence_pos[index_temp][1] == 'NR'):
+                        filtered_pos[index_temp] = (filtered_pos[index_temp][0],'NR_NULL')
+                        continue
+                    else:
+                        break
+    return filtered_pos
+
+
+
 def fixing_Han_Il(sentence, sentence_pos):
     filtered_pos = sentence_pos
     for ind in  range(1,len(sentence_pos)):
@@ -92,6 +107,7 @@ def apply_tag_correction(sentence: str) -> list:
     sentence_pos = fixing_NR_after_NNB(sentence_pos)
     sentence_pos = fixing_per_person(sentence_pos)
     sentence_pos = fixing_BaekJe(sentence, sentence_pos)
+    sentence_pos = fixing_Baek_Bum(sentence, sentence_pos)
     sentence_pos = fixing_Han_Il(sentence, sentence_pos)
     
     return sentence_pos
