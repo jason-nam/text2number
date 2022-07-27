@@ -6,7 +6,7 @@ def load_dictionary(path):
                 key = line.split("\t")[0]
                 value = line.split("\t")[1]
                 result[key] = str(value).strip()
-            except:
+            except Exception as e:
                 pass
     return result
 
