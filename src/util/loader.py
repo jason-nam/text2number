@@ -3,10 +3,10 @@ def load_dictionary(path):
     with open(path, 'r', encoding="utf8") as file:
         for line in file.readlines():
             try:
-                key = line.split("\\t")[0]
-                value = line.split("\\t")[1]
+                key = line.split("\t")[0]
+                value = line.split("\t")[1]
                 result[key] = str(value).strip()
-            except Exception as e:
+            except:
                 pass
     return result
 

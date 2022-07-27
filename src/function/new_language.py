@@ -1,9 +1,11 @@
+
+import os
+from util import *
 from typing  import Dict
-from util import loader
+_dir = os.path.dirname(os.path.abspath(__file__))
+dict_path = os.path.join(_dir, '../../resource/new_languages.txt')
 
-dict_path = "../data/dict/new_languages.txt"
-
-NEW_LANGUAGE: Dict[str, str] = loader.load_dictionary(dict_path)
+NEW_LANGUAGE: Dict[str, str] = load_dictionary(dict_path)
 
 def apply_dictionary(sentence: str) -> str:
     if not any(dictionary_key in sentence for dictionary_key in NEW_LANGUAGE):
