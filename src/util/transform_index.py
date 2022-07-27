@@ -14,8 +14,24 @@ def get_txt_ind(txt: str, ind_pos: int) -> int:
         for char in word:
             word_char_count += 1
             if word_char_count == pos_char_count:
-                ind_txt = pos_char_count+ind+1
+                ind_txt = pos_char_count+ind +1
+                break
     return ind_txt
+
+def get_txt_ind_impr(sentence, ind_pos):
+    txt_morph = get_morphs(sentence)
+    ind_in_sentence =0
+    copy = sentence[ind_in_sentence:]
+    #print(txt_morph)
+    for ind, morph in enumerate(txt_morph):
+        while copy[0] ==' ':
+            ind_in_sentence += 1
+            copy = sentence[ind_in_sentence]
+        if ind == ind_pos:
+            return ind_in_sentence
+        else:
+            ind_in_sentence += len(morph)
+            copy = sentence[ind_in_sentence:]
 
 def get_pos_ind(txt: str, ind_txt: int) -> int:
     txt_morph = get_morphs(txt)
