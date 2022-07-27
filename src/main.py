@@ -20,7 +20,7 @@ def main(sentence: str) -> str:
     sentence_end_index = 0
     for pos_index, pos_element in enumerate(sentence_pos):
         if any(nominative_case_pos_key == pos_element[0] for nominative_case_pos_key in nominative_case_pos_keys) and any(nominative_case_pos_tag == pos_element[1] for nominative_case_pos_tag in nominative_case_pos_tags):
-            sentence_end_index = transform_index.get_txt_ind(sentence, pos_index)+1
+            sentence_end_index = transform_index.get_txt_ind_impr(sentence, pos_index) + 2
             split_sentence.append(sentence[sentence_start_index:sentence_end_index])
             sentence_start_index = sentence_end_index
     split_sentence.append(sentence[sentence_start_index:])
@@ -37,9 +37,8 @@ def main(sentence: str) -> str:
 
 if __name__ == '__main__':
 
-    # input_text = "우리 제일 법안심사 소위원회는 지난 사월 이십팔 일 총 팔십한 건의 법률안을 심사하여 한 건은 수정안으로 채택하고 오십한 건은 통합 조정하여 두 건의 대안으로 제안하기로 의결하였습니다."
- 
-    input_text = "우리는 일 인당 사백억원을 냈다"
+    input_text = "어제 한일정상회담에서 "
+    # input_text = "작년에 우리 백제미소불 환수 관련해 가지고 얘기를 했는데 지금"
     start = time.time()  # 시작 시간 저장
     output_text = main(input_text)
     print("time :", time.time() - start)  # 현재시각 - 시작시간 = 실행 시간
