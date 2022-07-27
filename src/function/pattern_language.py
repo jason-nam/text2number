@@ -1,6 +1,6 @@
-from function import convert 
 import re
 from typing import Dict
+from function import *
 
 
 REGEX_NUMBERS_AFTER_CONVERT = [
@@ -23,14 +23,14 @@ def apply_regular_expression_before_convert(sentence):
         # regexp = re.compile(regex_num)
         re_iter = re.finditer(regex_num, sentence)
         for s in re_iter:
-            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), convert.get_number(s.group(1))) + sentence[s.end():]
+            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), get_number(s.group(1))) + sentence[s.end():]
     return sentence
 
 def apply_regular_expression(sentence: str) -> str:
     for regex_num in REGEX_NUMBERS_AFTER_CONVERT:
         re_iter = re.finditer(regex_num, sentence)
         for s in re_iter:
-            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), convert.get_number(s.group(1))) + sentence[s.end():]
+            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), get_number(s.group(1))) + sentence[s.end():]
 
     for regex_text in REGEX_TEXT_CORRECTIONS:
         re_iter_text = re.finditer(regex_text, sentence)
