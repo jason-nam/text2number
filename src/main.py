@@ -37,7 +37,7 @@ def main(sentence: str) -> str:
 
 if __name__ == '__main__':
 
-    input_text = "어제 한일정상회담에서 "
+    input_text = "허리나 요충사업원 "
     # input_text = "작년에 우리 백제미소불 환수 관련해 가지고 얘기를 했는데 지금"
     start = time.time()  # 시작 시간 저장
     output_text = main(input_text)

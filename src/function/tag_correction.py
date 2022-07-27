@@ -2,6 +2,28 @@ from util import pos, transform_index
 
 UNITS = ["일", "이", "삼", "사", "오", "육", "칠", "팔", "구",]
 
+# """#3번째에 오는게 띄워쓰기가 어디서 확인해야되는지 정보 0이면 앞, no matter인 경우 -1
+# """
+# #[key, text with key, space placement in text, list with key]
+# list = [
+#     ["백", "백제", 1, [('백','NR'),('제','')]],
+#     ["일", "한일", -1, [("한", "MM"), ("일", "NR")]],
+
+# ]
+
+# '''
+# def fixing_all_in_one(sentence, sentence_pos):
+#     filtered_pos = sentence_pos
+#     for pair in list:
+#         ind_to_change = -1
+#         if pair[0][1] == 'NR':
+#             ind_to_change = 0
+#         elif pair[1][1] == 'NR':
+#             ind_to_change =1
+#         for ind in range(1,len(sentence_pos)):
+#             if sentence_pos[ind][0]==pair[1][]
+# '''
+
 def get_text_ind(sentence, ind_pos):
     txt_morph = pos.get_morphs(sentence)
     ind_in_sentence =0
@@ -83,7 +105,6 @@ def apply_tag_correction(sentence: str) -> list:
     sentence_pos = fixing_per_person(sentence_pos)
     sentence_pos = fixing_BaekJe(sentence, sentence_pos)
     sentence_pos = fixing_Han_Il(sentence, sentence_pos)
-
     return sentence_pos
 
 

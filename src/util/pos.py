@@ -3,7 +3,11 @@ try:
 except:
     from eunjeon import Mecab
 
-mecab = Mecab()
+# mecab = Mecab()
+# print(mecab.pos("허리나 요충사업원 "))
+
+mecab = Mecab('C:\\Python39\\Lib\\site-packages\\eunjeon\\data\\mecab-ko-dic-msvc\\mecabrc')
+# print(mecab.pos("허리나 요충사업원 "))
 
 def get_pos(txt):
     return mecab.pos(txt)
