@@ -8,14 +8,13 @@ def resolve_mecab_version_issues(sentence_pos):
             continue
         else:
             if all(front_back_pos_element in ["NNG", "NNP"] for front_back_pos_element in [sentence_pos[sentence_pos_index-1][1], sentence_pos[sentence_pos_index+1][1]]):
-                sentence_pos[sentence_pos_index] = (sentence_pos_element[0], "NONO")
+                sentence_pos[sentence_pos_index] = (sentence_pos_element[0], "NR_NULL")
     return sentence_pos
 
 def get_text_ind(sentence, ind_pos):
     txt_morph = get_morphs(sentence)
     ind_in_sentence = 0
     copy = sentence[ind_in_sentence:]
-    #print(txt_morph)
     for ind, morph in enumerate(txt_morph):
         while copy[0] ==' ':
             ind_in_sentence += 1
@@ -41,7 +40,7 @@ def fixing_NR_after_MM(sentence_pos: list) -> list:
     for i in range(len(sentence_pos)-1):
         if sentence_pos[i] != () and sentence_pos[i+1] != ():
             if sentence_pos[i] == ('몇','MM') and sentence_pos[i+1][1]=='NR':
-                filtered_pos[i+1] = (filtered_pos[i+1][0],'NONO')
+                filtered_pos[i+1] = (filtered_pos[i+1][0],'NR_NULL')
     return filtered_pos
 
 def fixing_NR_after_NNB(sentence_pos):
@@ -58,7 +57,7 @@ def fixing_BaekJe(sentence, sentence_pos):
     for ind in  range(1,len(sentence_pos)):
         if sentence_pos[ind] != () and sentence_pos[ind-1] != ():
             if sentence_pos[ind][0][0] == '제' and sentence_pos[ind-1] == ('백','NR') and  not sentence[get_text_ind(sentence,ind)-1] == " ":
-                filtered_pos[ind-1] = (filtered_pos[ind-1][0],'NONO')
+                filtered_pos[ind-1] = (filtered_pos[ind-1][0],'NR_NULL')
     return filtered_pos
 
 def fixing_Han_Il(sentence, sentence_pos):
@@ -66,7 +65,7 @@ def fixing_Han_Il(sentence, sentence_pos):
     for ind in  range(1,len(sentence_pos)):
         if sentence_pos[ind] != () and sentence_pos[ind-1] != ():
             if sentence_pos[ind] ==  ('일','NR') and sentence_pos[ind-1][0] == '한' and  not sentence[get_text_ind(sentence,ind)-1] == " ":
-                filtered_pos[ind] = (filtered_pos[ind][0],'NONO')
+                filtered_pos[ind] = (filtered_pos[ind][0],'NR_NULL')
     return filtered_pos
 
 def fixing_per_person(sentence_pos):
