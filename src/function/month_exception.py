@@ -1,6 +1,7 @@
 # import sys
 # sys.path.append("../")
 
+from src.util.transform_index import get_txt_ind_impr
 from util import *
 from typing import Dict
 
@@ -12,11 +13,13 @@ MONTHS: Dict[str, str] = {
     "오월": "5월",
     "육월": "6월",
     "유월": "6월",
+    "유 월": "6월",
     "칠월": "7월",
     "팔월": "8월",
     "구월": "9월",
     "십월": "10월",
     "시월": "10월",
+    "시 월": "10월",
     "십일월": "11월",
     "십이월": "12월",
 }
@@ -35,11 +38,11 @@ def get_month_exception(txt: str) -> str:
         for ind, key in enumerate(txt_pos):
             try:
                 if key[0] == month and any(txt_pos[ind+1][1].startswith(exception_tag) for exception_tag in EXCEPTION_TAGS):
-                    txt_ind =  get_txt_ind(txt, ind+months_count)
+                    txt_ind =  get_txt_ind_impr(txt, ind+months_count)
                     txt = txt[:txt_ind] + txt[txt_ind:txt_ind+len(MONTHS[month])].replace(month, MONTHS[month]) + txt[txt_ind+len(MONTHS[month]):]
                     months_count += 1
                 elif key[0] == month and any(txt_pos[ind+1][0].startswith(exception_key) for exception_key in EXCEPTION_KEYS):
-                    txt_ind = get_txt_ind(txt, ind+months_count)
+                    txt_ind = get_txt_ind_impr(txt, ind+months_count)
                     txt = txt[:txt_ind] + txt[txt_ind:txt_ind+len(MONTHS[month])].replace(month, MONTHS[month]) + txt[txt_ind+len(MONTHS[month]):]
                     months_count += 1
             except:
