@@ -28,29 +28,29 @@ def korean2num(sentence: str) -> str:
     split_sentence.append(sentence[sentence_start_index:])
 
     for i in range(len(split_sentence)):
-        print(pos.get_pos(split_sentence[i]))
-        print(split_sentence[i])
+        # print(pos.get_pos(split_sentence[i]))
+        # print(split_sentence[i])
         split_sentence[i] = phone_number.phone_number_exception(split_sentence[i])
-        print(split_sentence[i])
+        # print(split_sentence[i])
         split_sentence[i] = new_language.apply_dictionary(split_sentence[i])
-        print(split_sentence[i])
+        # print(split_sentence[i])
         split_sentence[i] = pattern_language.apply_regular_expression_before_convert(split_sentence[i])
-        print(split_sentence[i])
+        # print(split_sentence[i])
         split_sentence[i] = sentence_parser.PutNumber(split_sentence[i])
-        print(split_sentence[i])
+        # print(split_sentence[i])
         split_sentence[i] = month_exception.get_month_exception(split_sentence[i])
-        print(split_sentence[i])
+        # print(split_sentence[i])
         split_sentence[i] = pattern_language.apply_regular_expression(split_sentence[i])
-        print(split_sentence[i])
+        # print(split_sentence[i])
         split_sentence[i] = new_language.revert_error_words(split_sentence[i])
-        print(split_sentence[i])
+        # print(split_sentence[i])
         result_sentence += split_sentence[i]
     return result_sentence
 
 if __name__ == '__main__':
     text = [
         # '내 전화번호는 공일공 이이이이 오오오오입니다. 니 전화번호는 뭐니?',
-        '나는 이번 유 월 사일에 본 시험에서 구점 사점을 받았어.',
+        # '나는 이번 유 월 사일에 본 시험에서 구점 사점을 받았어.',
         # '기상청에서는 올 이월에도 꽃샘추위가 몇 차례 찾아올 것이라고 전망하였다',
         # "허리나 요충사업원 또는 요추",
         # "내 인천 동구미추홀구 갑 허종식 의원입니다.",
