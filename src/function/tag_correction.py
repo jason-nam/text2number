@@ -67,7 +67,7 @@ def fixing_Baek_Bum(sentence, sentence_pos):
     for ind in  range(1,len(sentence_pos)):
         if sentence_pos[ind] != () and sentence_pos[ind-1] != ():
             if sentence_pos[ind] == ('범', "NNBC"):
-                for index_temp in range(ind-1,1, -1):
+                for index_temp in range(ind-1,0, -1):
                     if(sentence_pos[index_temp][1] == 'NR'):
                         filtered_pos[index_temp] = (filtered_pos[index_temp][0],'NR_NULL')
                         continue
