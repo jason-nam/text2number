@@ -90,3 +90,8 @@ if __name__ == '__main__':
         item = korean2num(item)
         print(item)
         print()
+
+    '''
+    2022.07.29.
+    push test
+    '''
