@@ -29,10 +29,9 @@ EXCEPTION_TAGS = ["J", "V", "N", "SN"]
 EXCEPTION_KEYS = ["말경"]
 
 
-def get_month_exception(txt: str) -> str:
+def get_month_exception(txt: str, txt_pos: list) -> str:
     if not any(month in txt for month in MONTHS):
         return txt
-    txt_pos = get_pos(txt)
     months_count = 0
     for month in MONTHS:
         for ind, key in enumerate(txt_pos):

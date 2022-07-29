@@ -39,6 +39,8 @@ def subject_case_marker(sentence:str, sentence_pos: list) -> list:
 
 def fixing_NR_after_MM(sentence_pos: list) -> list:
     filtered_pos = sentence_pos
+    if "몇" not in str(sentence_pos):
+        return sentence_pos
     for i in range(len(sentence_pos)-1):
         if sentence_pos[i] != () and sentence_pos[i+1] != ():
             if sentence_pos[i] == ('몇','MM') and sentence_pos[i+1][1]=='NR':
@@ -118,9 +120,7 @@ def fixing_2_bun(sentence, sentence_pos):
         del filter_pos[1]
     return filter_pos
 
-def apply_tag_correction(sentence: str) -> list:
-    sentence_pos = get_pos(sentence)
-
+def apply_tag_correction(sentence: str, sentence_pos: list) -> list:
     sentence_pos = resolve_mecab_version_issues(sentence_pos)
     sentence_pos = subject_case_marker(sentence, sentence_pos)
     sentence_pos = fixing_NR_after_MM(sentence_pos)

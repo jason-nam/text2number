@@ -17,10 +17,10 @@ def exceptionNR(nr_list: list):
     return copy
 
 
-def BringNumber(sentence: str) -> list:
+def BringNumber(sentence: str, sentence_pos: list) -> list:
     """문장에서 NR숫자들을 element로 가지는 list를 반환"""
 
-    sentence_pos = apply_tag_correction(sentence)
+    sentence_pos = apply_tag_correction(sentence, sentence_pos)
     sentence_pos = exceptionNR(sentence_pos)
     numbers = []
     number = ""
@@ -37,10 +37,10 @@ def BringNumber(sentence: str) -> list:
     return numbers
 
 
-def PutNumber(sentence: str) -> str:
+def PutNumber(sentence: str, sentence_pos: list) -> str:
     """문장input에 digit대입한 문장output return"""
 
-    numbers = remove_bad_words(BringNumber(sentence))
+    numbers = remove_bad_words(BringNumber(sentence, sentence_pos))
 
     if not any(number in sentence for number in numbers):
         return sentence
@@ -49,7 +49,7 @@ def PutNumber(sentence: str) -> str:
             if sentence_char != number[0]:
                 continue
             pos_ind = get_pos_ind(sentence, ind)
-            sentence_pos = apply_tag_correction(sentence)
+            sentence_pos = apply_tag_correction(sentence, sentence_pos)
             if sentence[ind:min(len(sentence),ind+len(number))] == number and sentence_pos[pos_ind][1] == "NR":
                 sentence = sentence[:ind] + get_number(number) + sentence[min(len(sentence),ind+len(number)):]
                 break

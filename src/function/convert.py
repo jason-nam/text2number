@@ -12,10 +12,16 @@ MULTIPLIERS = {
 }
 
 UNITS: Dict[str, int] = {
-    word: value
-    for value, word in enumerate(
-        "일 이 삼 사 오 육 칠 팔 구".split(), 1
-    )
+    "일": 1,
+    "이": 2,
+    "삼": 3,
+    "사": 4,
+    "오": 5,
+    "육": 6,
+    "륙": 6,
+    "칠": 7,
+    "팔": 8,
+    "구": 9,
 }
 
 ZEROS: Dict[str, int] = {
@@ -30,8 +36,18 @@ NUMBERS.update(ZEROS)
 
 EXCEPTIONS = ["일곱"]
 
+def get_txt(txt: str) -> str:
+    """
+    기능 설명: 
+    input: 문장
+    output: 문장
+    ex:
+    >>> print(get_txt("15"))
+    >>> 십오
+    """
+    return txt
 
-def get_number(word):
+def get_number(word: str) -> str:
     current_num = 0
     num = 0
     result = ''
@@ -48,7 +64,7 @@ def get_number(word):
                 current_num = 0
             elif char in UNITS:
                 if not current_num == 0:
-                    result += str(num+current_num)
+                    result +=  str(num+current_num) + " "
                     num = 0
                     current_num = digit
                 else:
