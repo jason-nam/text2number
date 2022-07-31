@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from function.bad_words import remove_bad_words
-from function.convert import get_number
+from function.convert import get_number, digit2txt
 from function.month_exception import get_month_exception
 from function.new_language import  apply_dictionary, revert_error_words
 from function.pattern_language import apply_regular_expression

@@ -49,7 +49,7 @@ def get_month_exception(txt: str, txt_pos: list) -> str:
     return txt
 
 if __name__ == "__main__":
-    
+
     txt = '그 겨울이 지나 이월 말경 다시 학교로 가 졸업식을 치렀다.'
     # print(pos.get_pos(txt))
     print(get_month_exception(txt))

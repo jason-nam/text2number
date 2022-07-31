@@ -85,7 +85,7 @@ if __name__ == '__main__':
     ]
     for item in text:
         # print(item)
-        
+
         print(tag_correction.apply_tag_correction(item, pos.get_pos(item)))
         item = korean2num(item)
         print(item)

@@ -4,26 +4,66 @@ from function import *
 
 TIME_REGEX = [
     # day, month, year
+    "[영|일|이|삼|사|오|육|유|칠|팔|구|시|십]{1,2}\s{0,1}월\s{0,1}([가-힣|0-9]+[일]*)\s{0,1}(일+)", # "...구 월 이십일..."
+    "[가-힣|0-9]+\s{0,1}년\s{0,1}([가-힣|0-9]+[일]*)\s{0,1}(일+)", # "...이천이십이년 이십일일..."
+    # ([영|일|이|삼|사|오|육|유|칠|팔|구|시|십]{1,2})\s{0,1}월[에는|동안|은|이|되어|되다|됐다]" # "...사 월에는..."
 ]
 
 UNIT_REGEX = [
     # percent, gram, kilo, etc
+    '([가-힣|0-9]+)\s*점\s*[가-힣|0-9]+\s*(프로|점|퍼센트|그람|킬로)', # "...구점 일 프로..."
+    '[가-힣|0-9]+\s*점\s*([가-힣|0-9]+)\s*(프로|점|퍼센트|그람|킬로)', # "...9 점 일 프로..."
 ]
 
 COUNT_REGEX = [
     # 제 _ 항/조 etc
+    '\s제([영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조|해|경]{1,})\s*[항|조|목|차관|조항|항목|관|회|차|법안심사]', # "...제 삼백칠습 항..."
+    '[^|\s]{1}제([영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조|해|경]{1,})\s*[항|조|목|차관|조항|항목|관|회|차|법안심사]', # "제 삼백칠습 항..."
+    '전과\s{0,1}([영|일|이|삼|사|오|육|칠|팔|구|십|백|천]{1,})\s{0,1}범', # "...전과 구..."
 ]
 
+CONVERT_REGEX = TIME_REGEX.copy()
+CONVERT_REGEX.extend(UNIT_REGEX)
+CONVERT_REGEX.extend(COUNT_REGEX)
+
 REVERT_REGEX = [
-    # 아라비아 숫자를 한글로 변환
+    # 아라비아 숫자를 다시 한글로 변환
+    '([0|1|2|3|4|5|6|7|8|9|10]{1})\s*시', # "...내 눈은 4시가 아니다..."
 ]
+
+CONVERT_TEXT_REGEX = {
+    # 문자가 기호 등 으로 변환
+    '[0-9\s](\s*[점]\s+)[0-9]': ".", # "...6 점 5..."
+}
+
+def convert_regular_expression(sentence: str) -> str:
+    for regex_num in REGEX_NUMBERS_AFTER_CONVERT:
+        re_iter = re.finditer(regex_num, sentence)
+        for s in re_iter:
+            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), get_number(s.group(1))) + sentence[s.end():]
+    return sentence
+
+def revert_regular_expression(sentence: str) -> str:
+    for regex_num in REGEX_NUMBERS_AFTER_CONVERT:
+        re_iter = re.finditer(regex_num, sentence)
+        for s in re_iter:
+            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), digit2txt(s.group(1))) + sentence[s.end():]
+    return sentence
+
+def convert_text_regular_expression(sentence: str) -> str:
+    for regex_text in CONVERT_TEXT_REGEX:
+        re_iter_text = re.finditer(regex_text, sentence)
+        for s in re_iter_text:
+            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), CONVERT_TEXT_REGEX[regex_text]) + sentence[s.end():]
+    return sentence
+
 
 REGEX_NUMBERS_AFTER_CONVERT = [
     '([가-힣|0-9]+)\s*점\s*[가-힣|0-9]+\s*(프로|점|퍼센트|그람|킬로)',
     '[가-힣|0-9]+\s*점\s*([가-힣|0-9]+)\s*(프로|점|퍼센트|그람|킬로)',
     '\s제([영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조|해|경]{1,})\s*[항|조|목|차관|조항|항목|관|회|차|법안심사]',
     '^제([영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조|해|경]{1,})\s*[항|조|목|차관|조항|항목|관|회|차|법안심사]',
-    
+
     # '\s제([가-힣]+)\s*[항|조|목|차관|조항|항목|관|회|차|법안심사]',
     '전과\s{0,1}([영|일|이|삼|사|오|육|칠|팔|구|십|백|천]{1,})\s{0,1}범',
 ]
@@ -66,7 +106,6 @@ def apply_regular_expression(sentence: str) -> str:
 #         for s in re_iter:
 #             sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), get_txt(s.group(1))) + sentence[s.end():]
 #     return sentence
-
 
 if __name__ == "__main__":
     # print(apply_regular_expression('제육 조 제이십사 항을 참고바랍니다.'))
