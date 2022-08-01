@@ -1,5 +1,5 @@
 import re
-from typing import Dict
+from typing import Dict, List
 from function import *
 
 TIME_REGEX = [
@@ -23,7 +23,7 @@ COUNT_REGEX = [
 ]
 
 PHONE_NUMBER_REGEX = [
-    '([공|영|일|이|삼|사|오|육|칠|팔|구]{2,3}\s{0,1}[공|영|일|이|삼|사|오|육|칠|팔|구]{3,4}\s{0,1}[공|영|일|이|삼|사|오|육|칠|팔|구]{4})'
+    '([공|영|일|이|삼|사|오|육|칠|팔|구]{2,3}\s{0,1}[공|영|일|이|삼|사|오|육|칠|팔|구]{3,4}\s{0,1}[공|영|일|이|삼|사|오|육|칠|팔|구]{4})' # "...공일공 이이이이 일일일일..."
 ]
 
 CONVERT_REGEX = TIME_REGEX.copy()
@@ -35,10 +35,10 @@ CONVERT_REGEX.extend(PHONE_NUMBER_REGEX)
 
 REVERT_REGEX = [
     # 아라비아 숫자를 다시 한글로 변환
-    '([0|1|2|3|4|5|6|7|8|9]{1,})\s*시', # "...내 눈은 4시가 아니다..."
+    '([0|1|2|3|4|5|6|7|8|9]{1,})\s{0,1}시[[가-힣]|\s{0,1}\D]', # "...내 눈은 4시가 아니다..."
 ]
 
-CONVERT_TEXT_REGEX = {
+CONVERT_TEXT_REGEX: Dict[str, str] = {
     # 문자가 기호 등 으로 변환
     '[0-9\s](\s*[점]\s+)[0-9]': ".", # "...6 점 5..."
 }

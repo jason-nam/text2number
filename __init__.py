@@ -31,23 +31,23 @@ def korean2num(sentence: str) -> str:
 
         sentence_pos = pos.get_pos(split_sentence[i])
         # print(pos.get_pos(split_sentence[i]))
-        # print(split_sentence[i])
+        print(split_sentence[i])
         split_sentence[i] = pattern_language.convert_regular_expression(split_sentence[i])
         # print(split_sentence[i])
         # split_sentence[i] = phone_number.phone_number_exception(split_sentence[i], sentence_pos)
-        # print(split_sentence[i])
+        print(split_sentence[i])
         split_sentence[i] = new_language.apply_dictionary(split_sentence[i])
-        # print(split_sentence[i])
+        print(split_sentence[i])
         split_sentence[i] = sentence_parser.PutNumber(split_sentence[i], sentence_pos)
         # print(split_sentence[i])
         # split_sentence[i] = month_exception.get_month_exception(split_sentence[i], sentence_pos)
-        # print(split_sentence[i])
+        print(split_sentence[i])
         split_sentence[i] = new_language.revert_error_words(split_sentence[i])
-        # print(split_sentence[i])
+        print(split_sentence[i])
         split_sentence[i] = pattern_language.convert_text_regular_expression(split_sentence[i])
-        # print(split_sentence[i])
+        print(split_sentence[i])
         split_sentence[i] = pattern_language.revert_regular_expression(split_sentence[i])
-        # print(split_sentence[i])
+        print(split_sentence[i])
         result_sentence += split_sentence[i]
     return result_sentence
 
@@ -83,7 +83,8 @@ if __name__ == '__main__':
         "그 조건일 시에 적용했다",
         "그 조건 일 시에 적용했다",
         "내 눈은 사 시가 아니다.",
-        "나는 이공삼공 세대에서 "
+        "나는 이공삼공 세대에서 ",
+        "지금은 삼시 사십분 이야",
     ]
     for item in text:
         # print(item)
