@@ -50,7 +50,7 @@ hundred_million_pos = 9
 text_digit = ['', '십', '백', '천', '만', '억']
 text_decimal = '점 '
 
-def digit2txt(arabic_num):
+def digit_to_txt(arabic_num):
     korean_num = ''
     digit_count = 0
     key_list = list(UNITS.keys())
@@ -71,20 +71,20 @@ def digit2txt(arabic_num):
     while True:
         not_show_digit = False
         ch = arabic_num[index]
-        #print(str(index) + ' ' + ch + ' ' +str(digit_count))
+        # print(str(index) + ' ' + ch + ' ' +str(digit_count))
         # ',' 무시
         if ch == ',':
             index = index + 1
             if index >= len(arabic_num):
-                break;
+                break
             continue
 
         if ch == '.':
             korean_num = korean_num + text_decimal
         else:
-            #자릿수가 2자리이고 1이면 '일'은 표시 안함.
+            # 자릿수가 2자리이고 1이면 '일'은 표시 안함.
             # 단 '만' '억'에서는 표시 함
-            if(digit_count > 1) and (digit_count != ten_thousand_pos) and  (digit_count != hundred_million_pos) and int(ch) == 1:
+            if int(ch) == 1 and (digit_count >= 1) and (digit_count != ten_thousand_pos) and  (digit_count != hundred_million_pos):
                 korean_num = korean_num + ''
             elif int(ch) == 0:
                 korean_num = korean_num + ''
@@ -112,23 +112,12 @@ def digit2txt(arabic_num):
             digit_count = digit_count - 1
         index = index + 1
         if index >= len(arabic_num):
-            break;
+            break
     return korean_num
 
 ########################################################################
 
-def get_text(txt: str) -> str:
-    """
-    기능 설명:
-    input: 문장
-    output: 문장
-    ex:
-    >>> print(get_txt("15"))
-    >>> 십오
-    """
-    return txt
-
-def get_number(korean_num: str) -> str:
+def txt_to_digit(korean_num: str) -> str:
     current_num = 0
     num = 0
     arabic_num = ''
@@ -171,12 +160,12 @@ def get_number(korean_num: str) -> str:
 
 
 if __name__ == "__main__":
-    print(get_number('제구조이천오백이십삼억오백만칠천사백육십일'))
-    print(get_number('이공삼공'))
-    print(get_number('육조 사천억원'))
-    print(get_number('제이 차관'))
-    print(get_number('    이 삼 오 육'))
-    print(get_number('이십삼오십스물'))
-    print(get_number('공일공 팔육사육 오오오일'))
+    print(txt_to_digit('제구조이천오백이십삼억오백만칠천사백육십일'))
+    print(txt_to_digit('이공삼공'))
+    print(txt_to_digit('육조 사천억원'))
+    print(txt_to_digit('제이 차관'))
+    print(txt_to_digit('    이 삼 오 육'))
+    print(txt_to_digit('이십삼오십스물'))
+    print(txt_to_digit('공일공 팔육사육 오오오일'))
 
-    print(digit2txt("245"))
+    print(digit_to_txt("1"))

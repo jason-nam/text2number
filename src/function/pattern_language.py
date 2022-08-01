@@ -6,7 +6,7 @@ TIME_REGEX = [
     # day, month, year
     "[영|일|이|삼|사|오|육|유|칠|팔|구|시|십]{1,2}\s{0,1}월\s{0,1}([가-힣|0-9]+[일]*)\s{0,1}(일+)", # "...구 월 이십일..."
     "[가-힣|0-9]+\s{0,1}년\s{0,1}([가-힣|0-9]+[일]*)\s{0,1}(일+)", # "...이천이십이년 이십일일..."
-    # ([영|일|이|삼|사|오|육|유|칠|팔|구|시|십]{1,2})\s{0,1}월[에는|동안|은|이|되어|되다|됐다]" # "...사 월에는..."
+    "([영|일|이|삼|사|오|육|유|칠|팔|구|시|십]{1,2})\s{0,1}월[에는|에도|동안|은|이|되어|되다|됐다|\s{0,1}]" # "...사 월에는..."
 ]
 
 UNIT_REGEX = [
@@ -17,18 +17,25 @@ UNIT_REGEX = [
 
 COUNT_REGEX = [
     # 제 _ 항/조 etc
-    '\s제([영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조|해|경]{1,})\s*[항|조|목|차관|조항|항목|관|회|차|법안심사]', # "...제 삼백칠습 항..."
-    '[^|\s]{1}제([영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조|해|경]{1,})\s*[항|조|목|차관|조항|항목|관|회|차|법안심사]', # "제 삼백칠습 항..."
+    '\s제([영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조|해|경]{1,})\s{0,1}[항|조|목|차관|조항|항목|관|회|차|법안심사]', # "...제 삼백칠십 항..."
+    '^제([영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조|해|경]{1,})\s{0,1}[항|조|목|차관|조항|항목|관|회|차|법안심사]', # "제 삼백칠십 항..."
     '전과\s{0,1}([영|일|이|삼|사|오|육|칠|팔|구|십|백|천]{1,})\s{0,1}범', # "...전과 구..."
+]
+
+PHONE_NUMBER_REGEX = [
+    '([공|영|일|이|삼|사|오|육|칠|팔|구]{2,3}\s{0,1}[공|영|일|이|삼|사|오|육|칠|팔|구]{3,4}\s{0,1}[공|영|일|이|삼|사|오|육|칠|팔|구]{4})'
 ]
 
 CONVERT_REGEX = TIME_REGEX.copy()
 CONVERT_REGEX.extend(UNIT_REGEX)
 CONVERT_REGEX.extend(COUNT_REGEX)
+CONVERT_REGEX.extend(PHONE_NUMBER_REGEX)
+
+# print(CONVERT_REGEX)
 
 REVERT_REGEX = [
     # 아라비아 숫자를 다시 한글로 변환
-    '([0|1|2|3|4|5|6|7|8|9|10]{1})\s*시', # "...내 눈은 4시가 아니다..."
+    '([0|1|2|3|4|5|6|7|8|9]{1,})\s*시', # "...내 눈은 4시가 아니다..."
 ]
 
 CONVERT_TEXT_REGEX = {
@@ -37,23 +44,29 @@ CONVERT_TEXT_REGEX = {
 }
 
 def convert_regular_expression(sentence: str) -> str:
-    for regex_num in REGEX_NUMBERS_AFTER_CONVERT:
+    for regex_num in CONVERT_REGEX:
         re_iter = re.finditer(regex_num, sentence)
         for s in re_iter:
-            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), get_number(s.group(1))) + sentence[s.end():]
+            # print(sentence)
+            # print(s.group(1))
+            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), txt_to_digit(s.group(1))) + sentence[s.end():]
     return sentence
 
 def revert_regular_expression(sentence: str) -> str:
-    for regex_num in REGEX_NUMBERS_AFTER_CONVERT:
+    for regex_num in REVERT_REGEX:
         re_iter = re.finditer(regex_num, sentence)
         for s in re_iter:
-            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), digit2txt(s.group(1))) + sentence[s.end():]
+            # print(sentence)
+            # print(s.group(1))
+            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), digit_to_txt(s.group(1))) + sentence[s.end():]
     return sentence
 
 def convert_text_regular_expression(sentence: str) -> str:
     for regex_text in CONVERT_TEXT_REGEX:
         re_iter_text = re.finditer(regex_text, sentence)
         for s in re_iter_text:
+            # print(sentence)
+            # print(s.group(1))
             sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), CONVERT_TEXT_REGEX[regex_text]) + sentence[s.end():]
     return sentence
 
@@ -86,14 +99,14 @@ def apply_regular_expression_before_convert(sentence):
         # regexp = re.compile(regex_num)
         re_iter = re.finditer(regex_num, sentence)
         for s in re_iter:
-            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), get_number(s.group(1))) + sentence[s.end():]
+            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), txt_to_digit(s.group(1))) + sentence[s.end():]
     return sentence
 
 def apply_regular_expression(sentence: str) -> str:
     for regex_num in REGEX_NUMBERS_AFTER_CONVERT:
         re_iter = re.finditer(regex_num, sentence)
         for s in re_iter:
-            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), get_number(s.group(1))) + sentence[s.end():]
+            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), txt_to_digit(s.group(1))) + sentence[s.end():]
     for regex_text in REGEX_TEXT_CORRECTIONS:
         re_iter_text = re.finditer(regex_text, sentence)
         for s in re_iter_text:

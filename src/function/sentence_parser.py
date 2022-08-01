@@ -51,6 +51,6 @@ def PutNumber(sentence: str, sentence_pos: list) -> str:
             pos_ind = get_pos_ind(sentence, ind)
             sentence_pos = apply_tag_correction(sentence, sentence_pos)
             if sentence[ind:min(len(sentence),ind+len(number))] == number and sentence_pos[pos_ind][1] == "NR":
-                sentence = sentence[:ind] + get_number(number) + sentence[min(len(sentence),ind+len(number)):]
+                sentence = sentence[:ind] + txt_to_digit(number) + sentence[min(len(sentence),ind+len(number)):]
                 break
     return sentence

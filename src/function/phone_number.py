@@ -11,7 +11,7 @@ def phone_number_exception(sentence: str, sentence_pos: list) -> str:
         calling_code_start_indices = [i for i in range(len(sentence)) if sentence.startswith(calling_code, i)]
         for calling_code_start_index in calling_code_start_indices:
             
-            sentence = sentence[:calling_code_start_index] + get_number(sentence[calling_code_start_index:calling_code_start_index+len(calling_code)+10]) + sentence[calling_code_start_index+len(calling_code)+10:]
+            sentence = sentence[:calling_code_start_index] + txt_to_digit(sentence[calling_code_start_index:calling_code_start_index+len(calling_code)+10]) + sentence[calling_code_start_index+len(calling_code)+10:]
     return sentence
 
 
