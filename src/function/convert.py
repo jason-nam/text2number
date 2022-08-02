@@ -167,5 +167,6 @@ if __name__ == "__main__":
     print(txt_to_digit('    이 삼 오 육'))
     print(txt_to_digit('이십삼오십스물'))
     print(txt_to_digit('공일공 팔육사육 오오오일'))
+    print(txt_to_digit("스물일곱"))
 
     print(digit_to_txt("1"))
