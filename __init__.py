@@ -31,9 +31,9 @@ def korean2num(sentence: str) -> str:
 
         sentence_pos = pos.get_pos(split_sentence[i])
         # print(pos.get_pos(split_sentence[i]))
-        # print(split_sentence[i])
+        print(split_sentence[i])
         split_sentence[i] = pattern_language.convert_regular_expression(split_sentence[i])
-        # print(split_sentence[i])
+        print(split_sentence[i])
         # split_sentence[i] = phone_number.phone_number_exception(split_sentence[i], sentence_pos)
         # print(split_sentence[i])
         split_sentence[i] = new_language.apply_dictionary(split_sentence[i])
@@ -95,6 +95,10 @@ if __name__ == '__main__':
         # "이 시간부터 코딩을 해보겠습니다.",
         # "메달이 정해진 순간, 은메달 선수의 행복도는 십 점 중 사 점 팔 점, 동메달 선수는 칠 점 일 점이라는 분석이 있다",
         "광고 회사의 사업자등록번호를 조회하니 공공일다시공공다시사삼이이오가 조회 결과로 나왔다.",
+        "이천 이십 년 전 세계 경제회복을 위한 예산 지출의 오 분의 일 가량만 탄소 감축 예산으로 배정된 것으로 나타났다.",
+        "이월달에 이월했다.",
+        "나는 십이월 일일에 출소했어",
+        "나는 십이월 삼십일일에 출소했어",
     ]
     for item in text:
         # print(item)
@@ -103,8 +107,3 @@ if __name__ == '__main__':
         item = korean2num(item)
         print(item)
         print()
-
-    '''
-    2022.07.29.
-    push test
-    '''

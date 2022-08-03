@@ -4,15 +4,18 @@ from function import *
 
 TIME_REGEX = [
     # day, month, year
-    "[영|일|이|삼|사|오|육|유|칠|팔|구|시|십]{1,2}\s{0,1}월\s{0,1}([가-힣|0-9]+[일]*)\s{0,1}(?:일+)", # "...구 월 이십일..."
+    "([일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억]{1,})\s*년",
+    "[영|일|이|삼|사|오|육|유|칠|팔|구|시|십]{1,2}\s{0,1}월\s{0,1}([일|이|삼|사|오|육|칠|팔|구|십]{1,})\s{0,1}일", # "...구 월 이십일..."
     "[가-힣|0-9]+\s{0,1}년\s{0,1}([가-힣|0-9]+[일]*)\s{0,1}(?:일+)", # "...이천이십이년 이십일일..."
-    "([영|일|이|삼|사|오|육|유|칠|팔|구|시|십]{1,2})\s{0,1}월[에는|에도|동안|은|이|되어|되다|됐다|\s{0,1}]" # "...사 월에는..."
+    "([영|일|이|삼|사|오|육|유|칠|팔|구|시|십]{1,2})\s{0,1}월[^하했할]" # "...사 월에는..."
 ]
 
 UNIT_REGEX = [
     # percent, gram, kilo, etc
     '([가-힣|0-9]+)\s*점\s*[가-힣|0-9]+\s*(프로|점|퍼센트|그람|킬로)', # "...구점 일 프로..."
     '[가-힣|0-9]+\s*점\s*([가-힣|0-9]+)\s*(프로|점|퍼센트|그람|킬로)', # "...9 점 일 프로..."
+    '([영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조]{1,})\s*분의\s*[영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조]{1,}',
+    '[0-9]\s*분의\s*([영|일|이|삼|사|오|육|칠|팔|구|십|백|천|만|억|조]{1,})',
 ]
 
 COUNT_REGEX = [
@@ -26,7 +29,7 @@ COUNT_REGEX = [
 
 ID_NUMBER_REGEX = [
     '([공|영|일|이|삼|사|오|육|칠|팔|구]{2,3}\s{0,1}[공|영|일|이|삼|사|오|육|칠|팔|구]{3,4}\s{0,1}[공|영|일|이|삼|사|오|육|칠|팔|구]{4})', # "...공일공 이이이이 일일일일..."
-    '([공|영|일|이|삼|사|오|육|칠|팔|구]{3}\s*다시\s*[공|영|일|이|삼|사|오|육|칠|팔|구]{2,4}\s*다시\s*[공|영|일|이|삼|사|오|육|칠|팔|구]{4,5})' # 사업자 번호
+    '([공|영|일|이|삼|사|오|육|칠|팔|구]{3}\s*다시\s*[공|영|일|이|삼|사|오|육|칠|팔|구]{2,4}\s*다시\s*[공|영|일|이|삼|사|오|육|칠|팔|구]{4,5})', # 사업자 번호
 ]
 
 CONVERT_REGEX = TIME_REGEX.copy()
@@ -46,7 +49,8 @@ REVERT_REGEX = [
 CONVERT_TEXT_REGEX: Dict[str, str] = {
     # 문자가 기호 등 으로 변환
     '[0-9\s](\s*점\s+)[0-9]': ".", # "...6 점 5..."
-    '[0-9](\s*다시|에\s*)[0-9]': "-", # "...6 다시 5..."
+    '[0-9](\s*다시\s*)[0-9]': "-", # "...6 다시 5..."
+    # '[0-9](\s*분의\s*)[0-9]' : "/",
 }
 
 def convert_regular_expression(sentence: str) -> str:
@@ -55,7 +59,9 @@ def convert_regular_expression(sentence: str) -> str:
         for s in re_iter:
             # print(sentence)
             # print(s.group(1))
-            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), txt_to_digit(s.group(1))) + sentence[s.end():]
+            start = s.span(1)[0]
+            end = s.span(1)[1]
+            sentence = sentence[:start] + sentence[start:end].replace(s.group(1), txt_to_digit(s.group(1))) + sentence[end:]
     return sentence
 
 def revert_regular_expression(sentence: str) -> str:
@@ -64,7 +70,9 @@ def revert_regular_expression(sentence: str) -> str:
         for s in re_iter:
             # print(sentence)
             # print(s.group(1))
-            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), digit_to_txt(s.group(1))) + sentence[s.end():]
+            start = s.span(1)[0]
+            end = s.span(1)[1]
+            sentence = sentence[:start] + sentence[start:end].replace(s.group(1), digit_to_txt(s.group(1))) + sentence[end:]
     return sentence
 
 def convert_text_regular_expression(sentence: str) -> str:
@@ -73,7 +81,9 @@ def convert_text_regular_expression(sentence: str) -> str:
         for s in re_iter_text:
             # print(sentence)
             # print(s.group(1))
-            sentence = sentence[:s.start()] + sentence[s.start():s.end()].replace(s.group(1), CONVERT_TEXT_REGEX[regex_text]) + sentence[s.end():]
+            start = s.span(1)[0]
+            end = s.span(1)[1]
+            sentence = sentence[:start] + sentence[start:end].replace(s.group(1), CONVERT_TEXT_REGEX[regex_text]) + sentence[end:]
     return sentence
 
 if __name__ == "__main__":
