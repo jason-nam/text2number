@@ -35,11 +35,14 @@ def get_txt_ind_impr(sentence, ind_pos):
 
 def get_pos_ind(txt: str, ind_txt: int) -> int:
     txt_morph = get_morphs(txt)
-    txt_word = txt[:ind_txt+1].split()
+    txt_word = txt[:ind_txt]
     pos_char_count = 0
     word_char_count = 0
     ind_pos = 0
-    word_char_count = ind_txt-len(txt_word)+1
+
+    for c in txt_word:
+        if c != " ":
+            word_char_count += 1
     for ind, morph in enumerate(txt_morph):
         for char in morph:
             if pos_char_count == word_char_count:

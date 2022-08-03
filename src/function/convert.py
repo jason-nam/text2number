@@ -18,13 +18,11 @@ UNITS: Dict[str, int] = {
     "사": 4,
     "오": 5,
     "육": 6,
+    "유": 6,
+    "륙": 6,
     "칠": 7,
     "팔": 8,
     "구": 9,
-}
-
-UNITS_EXCEPTIONS: Dict[str, int] = {
-    "륙": 6,
 }
 
 ZEROS: Dict[str, int] = {
@@ -34,7 +32,6 @@ ZEROS: Dict[str, int] = {
 
 NUMBERS = MULTIPLIERS.copy()
 NUMBERS.update(UNITS)
-NUMBERS.update(UNITS_EXCEPTIONS)
 NUMBERS.update(ZEROS)
 
 EXCEPTIONS = ["일곱"]
@@ -47,7 +44,9 @@ EXCEPTIONS = ["일곱"]
 ten_thousand_pos = 4
 # 억 단위 자릿수
 hundred_million_pos = 9
-text_digit = ['', '십', '백', '천', '만', '억']
+trillion_pos = 13
+
+text_digit = ['', '십', '백', '천', '만', '억', '조',]
 text_decimal = '점 '
 
 def digit_to_txt(arabic_num):
@@ -84,23 +83,27 @@ def digit_to_txt(arabic_num):
         else:
             # 자릿수가 2자리이고 1이면 '일'은 표시 안함.
             # 단 '만' '억'에서는 표시 함
-            if int(ch) == 1 and (digit_count >= 1) and (digit_count != ten_thousand_pos) and  (digit_count != hundred_million_pos):
+            if int(ch) == 1 and (digit_count >= 1) and (digit_count != ten_thousand_pos) and (digit_count != hundred_million_pos) and (digit_count != trillion_pos):
                 korean_num = korean_num + ''
             elif int(ch) == 0:
                 korean_num = korean_num + ''
                 # 단 '만' '억'에서는 표시 함
-                if (digit_count != ten_thousand_pos) and  (digit_count != hundred_million_pos):
+                if (digit_count != ten_thousand_pos) and (digit_count != hundred_million_pos) and (digit_count != trillion_pos):
                     not_show_digit = True
             else:
                 korean_num = korean_num + list(UNITS.keys())[list(UNITS.values()).index(int(ch))]
+        # 1조 이상
+        if digit_count > trillion_pos:
+            if not not_show_digit:
+                korean_num = korean_num + text_digit[digit_count-trillion_pos]
 
         # 1억 이상
         if digit_count > hundred_million_pos:
-            if not not_show_digit:
+            if not not_show_digit and korean_num[-1] != "조":
                 korean_num = korean_num + text_digit[digit_count-hundred_million_pos]
         # 1만 이상
         elif digit_count > ten_thousand_pos:
-            if not not_show_digit:
+            if not not_show_digit and korean_num[-1] != "조" and korean_num[-1] != "억":
                 korean_num = korean_num + text_digit[digit_count-ten_thousand_pos]
         else:
             if not not_show_digit:
@@ -167,6 +170,7 @@ if __name__ == "__main__":
     print(txt_to_digit('    이 삼 오 육'))
     print(txt_to_digit('이십삼오십스물'))
     print(txt_to_digit('공일공 팔육사육 오오오일'))
-    print(txt_to_digit("스물일곱"))
+    print(txt_to_digit("오륙"))
 
     print(digit_to_txt("1"))
+    print(digit_to_txt("1000000000"))
