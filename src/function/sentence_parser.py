@@ -1,7 +1,16 @@
 from function import *
 from util import *
 from util.transform_index import get_txt_ind_impr
+import os
+_dir = os.path.dirname(os.path.abspath(__file__))
+path = os.path.join(_dir, '../../resource/bad_words.txt')
 
+BAD_WORDS = load_list(path)
+
+def remove_bad_words(numbers: list) -> list:
+    for bad_word in BAD_WORDS:
+        numbers = list(filter(lambda a: a != bad_word, numbers))
+    return numbers
 
 def exceptionNR(nr_list: list):
     copy = nr_list
@@ -62,14 +71,30 @@ def BringNumber(sentence: str, sentence_pos: list) -> list:
                 string_list.append((str,get_txt_ind_impr(sentence, NR_index_in_sentence)))
                 str = ''
         if pos_list[ind] != b and ind ==len(pos_list)-1:
-            string_list.append((str,get_txt_ind_impr(sentence, NR_index_in_sentence)))
+            string_list.append((str,get_txt_ind_impr(sentence, NR_index_in_sentence)))   
+    # final_list = []
+    # if len(string_list)>1:
+    #     final_number =string_list[0][0]
+    #     first_ind = string_list[0][1]
+    #     for ind in range(1,len(string_list)):
+    #         between_numbers = sentence[string_list[ind-1][1]+len(string_list[ind-1][0]):string_list[ind][1]]
+    #         if between_numbers.replace(" ","")=="":
+    #             final_number += between_numbers+ string_list[ind][0]
+    #         else:
+    #             final_list.append((final_number,first_ind))
+    #             final_number = string_list[ind][0]
+    #             first_ind = string_list[ind][1]
+    #         if ind == len(string_list)-1:
+    #             final_list.append((final_number,first_ind))
+    # elif len(string_list)<=1:
+    #     return string_list
+    # return final_list
     return string_list
-
 
 def PutNumber(sentence: str, sentence_pos: list) -> str:
     """문장input에 digit대입한 문장output return"""
 
-    numList = (BringNumber(sentence, sentence_pos))
+    numList = remove_bad_words(BringNumber(sentence, sentence_pos))
     #print(numbers)
     result =''
     ind_in_sentence = 0
