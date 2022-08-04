@@ -20,11 +20,11 @@ def get_txt_ind(txt: str, ind_pos: int) -> int:
 
 def get_txt_ind_impr(sentence, ind_pos):
     txt_morph = get_morphs(sentence)
-    ind_in_sentence =0
+    ind_in_sentence = 0
     copy = sentence[ind_in_sentence:]
     #print(txt_morph)
     for ind, morph in enumerate(txt_morph):
-        while copy[0] ==' ':
+        while copy[0] == ' ':
             ind_in_sentence += 1
             copy = sentence[ind_in_sentence]
         if ind == ind_pos:

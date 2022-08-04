@@ -65,26 +65,35 @@ def FilterNone_toNR(sentence,sentence_pos):
     """
     changing non_NR to NR
     """
-    for ind,element in enumerate(list_not_to_nr):
-        for ind,pos in enumerate(sentence_pos):
-            if pos != () and pos == element[0]:
-                if sentence_pos[ind+element[-3]]!= () and sentence_pos[ind+element[-3]][0][0] in UNITS:
-                    if element[-2] and not SpaceBetween(sentence,sentence_pos, ind, element[-3]):
+    for ind, element in enumerate(list_not_to_nr):
+        for ind, pos in enumerate(sentence_pos):
+            if (
+                pos != () 
+                and pos == element[0]
+            ):
+                if (
+                    sentence_pos[ind + element[-3]] != () 
+                    and sentence_pos[ind + element[-3]][0][0] in UNITS
+                ):
+                    if (
+                        element[-2] 
+                        and not SpaceBetween(sentence, sentence_pos, ind, element[-3])
+                    ):
                         #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                        sentence_pos[ind+element[-3]] = (sentence_pos[ind+element[-3]][0], 'NR')
+                        sentence_pos[ind + element[-3]] = (sentence_pos[ind + element[-3]][0], 'NR')
                         if element[-1]:
-                            at_where = ind+element[-3]*2
+                            at_where = ind + element[-3] * 2
                             while sentence_pos[at_where][0] in UNITS:
                                 #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                                sentence_pos[at_where] = (sentence_pos[at_where][0],'NR')
+                                sentence_pos[at_where] = (sentence_pos[at_where][0], 'NR')
                     elif not element[-2]:
                         #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                        sentence_pos[ind+element[-3]] = (sentence_pos[ind+element[-3]][0], 'NR')
+                        sentence_pos[ind + element[-3]] = (sentence_pos[ind + element[-3]][0], 'NR')
                         if element[-1]:
-                            at_where = ind+element[-3]*2
+                            at_where = ind + element[-3] * 2
                             while sentence_pos[at_where][0] in UNITS:
                                 #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                                sentence_pos[at_where] = (sentence_pos[at_where][0],'NR')
+                                sentence_pos[at_where] = (sentence_pos[at_where][0], 'NR')
     return sentence_pos   
 
 def correct_tags(sentence, sentence_pos):

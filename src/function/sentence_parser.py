@@ -34,44 +34,51 @@ def BringNumber(sentence: str, sentence_pos: list) -> list:
     #print(sentence_pos)
     #print(sentence_pos)
     pos_list = []
+
     for pos in sentence_pos:
         if pos[1] != 'NR':
             null_info=()
             pos_list.append(null_info)
         else:
             pos_list.append(pos)
+
     pos_list = exceptionNR(pos_list)
     string_list = []
     str = ""
-    
     NR_index_in_sentence = 0
+
     for ind, a in enumerate(pos_list):
         b = ()
         if a != b:
-            if pos_list[ind-1] != b:
+            if pos_list[ind - 1] != b:
                 txt_ind = get_txt_ind_impr(sentence, ind)
                 txt_ind2 = get_txt_ind_impr(sentence, ind-1)
                 if txt_ind2 == None:
                     difference = 1
-                else:   difference = txt_ind - txt_ind2 
+                else:   
+                    difference = txt_ind - txt_ind2 
+
                 if difference != 1:
-                    string_list.append((str,get_txt_ind_impr(sentence, NR_index_in_sentence)))
-                    str=pos_list[ind][0]
+                    string_list.append((str, get_txt_ind_impr(sentence, NR_index_in_sentence)))
+                    str = pos_list[ind][0]
                     NR_index_in_sentence = ind
                 else:
                     if str == '':
                         NR_index_in_sentence = ind
                     str += a[0]
             else:
-                if str =='':
+                if str == '':
                     NR_index_in_sentence = ind
                 str += a[0]
         else:
             if str != '':
-                string_list.append((str,get_txt_ind_impr(sentence, NR_index_in_sentence)))
+                string_list.append((str, get_txt_ind_impr(sentence, NR_index_in_sentence)))
                 str = ''
-        if pos_list[ind] != b and ind ==len(pos_list)-1:
-            string_list.append((str,get_txt_ind_impr(sentence, NR_index_in_sentence)))   
+        if (
+            pos_list[ind] != b 
+            and ind == len(pos_list) - 1
+        ):
+            string_list.append((str, get_txt_ind_impr(sentence, NR_index_in_sentence)))   
     # final_list = []
     # if len(string_list)>1:
     #     final_number =string_list[0][0]
@@ -96,10 +103,11 @@ def PutNumber(sentence: str, sentence_pos: list) -> str:
 
     numList = remove_bad_words(BringNumber(sentence, sentence_pos))
     #print(numbers)
-    result =''
+    result = ''
     ind_in_sentence = 0
+    
     for num in numList:
-        result += sentence[ind_in_sentence:num[1]] + txt_to_digit(num[0])
+        result += sentence[ind_in_sentence:num[1]] + txt_to_digit(num[0], False)
         ind_in_sentence = num[1] + len(num[0])
     return result + sentence[ind_in_sentence:]
 
