@@ -129,6 +129,6 @@ dmypy.json
 .pyre/
 
 test/*
-!test
+!test/README.md
 
 .vscode/
