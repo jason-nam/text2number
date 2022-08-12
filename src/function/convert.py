@@ -4,11 +4,6 @@ MULTIPLIERS = {
     "십": 10,
     "백": 100,
     "천": 1000,
-    # "만": 10000,
-    # "억": 100000000,
-    # "조": 1000000000000,
-    # "경": 10000000000000000,
-    # "해": 100000000000000000000,
 }
 
 MTHOUSANDS = {
@@ -160,29 +155,45 @@ def txt_to_digit(korean_num: str, relaxed: bool) -> str:
         return korean_num
 
     for char in korean_num:
-        if char in NUMBERS:
+        if char == " ":
+            pass
+        elif char in NUMBERS:
             digit = int(NUMBERS[char])
             if char in MULTIPLIERS:
                 if current_num == 0:
-                    num += digit
+                    num = num + digit
                 else:
-                    num += current_num*digit
+                    num = num + current_num*digit
                 current_num = 0
             elif char in UNITS:
                 if not current_num == 0:
-                    arabic_num += str(num+current_num) + " "
+                    arabic_num = (
+                        arabic_num 
+                        + str(num+current_num) 
+                        + " "
+                    )
                     num = 0
                     current_num = digit
                 else:
-                    current_num += digit
+                    current_num = current_num + digit
             elif char in ZEROS:
                 if (
                     not num == 0 
                     or not current_num == 0
                 ):
-                    arabic_num += str(num+current_num) + " " + str(digit)
+                    arabic_num = (
+                        arabic_num 
+                        + str(num+current_num) 
+                        + " " 
+                        + str(digit) 
+                        + " "
+                    )
                 else:
-                    arabic_num += str(digit) + " "
+                    arabic_num = (
+                        arabic_num 
+                        + str(digit) 
+                        + " "
+                    )
                 num = 0
                 current_num = 0
         else:
@@ -190,9 +201,13 @@ def txt_to_digit(korean_num: str, relaxed: bool) -> str:
                 not current_num == 0 
                 or not num == 0
             ):
-                arabic_num += str(num+current_num) + char
+                arabic_num = (
+                    arabic_num 
+                    + str(num+current_num) 
+                    + char
+                )
             else:
-                arabic_num += char
+                arabic_num = arabic_num + char
             num = 0
             current_num = 0
 
@@ -200,19 +215,21 @@ def txt_to_digit(korean_num: str, relaxed: bool) -> str:
         not num == 0 
         or not current_num == 0
     ):
-        arabic_num += str(num+current_num)
+        arabic_num = arabic_num + str(num+current_num)
     return arabic_num
 
 
 if __name__ == "__main__":
-    print(txt_to_digit('제구조이천오백이십삼억오백만칠천사백육십일', False))
-    print(txt_to_digit('이공삼공', False))
-    print(txt_to_digit('육조 사천억원', False))
-    print(txt_to_digit('제이 차관', False))
-    print(txt_to_digit('    이 삼 오 육', False))
-    print(txt_to_digit('이십삼오십스물', False))
+    # print(txt_to_digit('제구조이천오백이십삼억오백만칠천사백육십일', False))
+    # print(txt_to_digit('이공삼공', False))
+    # print(txt_to_digit('육조 사천억원', False))
+    # print(txt_to_digit('제이 차관', False))
+    # print(txt_to_digit('    이 삼 오 육', False))
+    # print(txt_to_digit('이십삼오십스물', False))
     print(txt_to_digit('공일공 팔육사육 오오오일', False))
     print(txt_to_digit("오륙", False))
+    print(txt_to_digit("오천이백", False))
+    print(txt_to_digit("오이영영", False))
 
-    print(digit_to_txt("1"))
-    print(digit_to_txt("1000000000"))
+    # print(digit_to_txt("1"))
+    # print(digit_to_txt("1000000000"))

@@ -1,7 +1,10 @@
+from contextlib import AbstractAsyncContextManager
 import os
+from re import A
 import sys
+
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from src.function import sentence_parser, new_language, pattern_language, month_exception, phone_number, tag_correction
+from src.function import lang_dict, sentence_parser, pattern_language, month_exception, phone_number, tag_correction
 from src.util import transform_index, pos
 
 def korean2num(sentence: str) -> str:
@@ -32,25 +35,28 @@ def korean2num(sentence: str) -> str:
     split_sentence.append(sentence[sentence_start_index:])
 
     for i in range(len(split_sentence)):
-        sentence_pos = pos.get_pos(split_sentence[i])
+        # sentence_pos = pos.get_pos(split_sentence[i])
         # print(pos.get_pos(split_sentence[i]))
         # print(split_sentence[i])
         split_sentence[i] = pattern_language.convert_regular_expression(split_sentence[i])
         # print(split_sentence[i])
         # split_sentence[i] = phone_number.phone_number_exception(split_sentence[i], sentence_pos)
         # print(split_sentence[i])
-        split_sentence[i] = new_language.apply_dictionary(split_sentence[i])
+        split_sentence[i] = lang_dict.apply_dictionary(split_sentence[i])
         # print(split_sentence[i])
         sentence_pos = pos.get_pos(split_sentence[i])
         split_sentence[i] = sentence_parser.PutNumber(split_sentence[i], sentence_pos)
         # print(split_sentence[i])
         # split_sentence[i] = month_exception.get_month_exception(split_sentence[i], sentence_pos)
         # print(split_sentence[i])
-        split_sentence[i] = new_language.revert_error_words(split_sentence[i])
+        split_sentence[i] = lang_dict.revert_error_words(split_sentence[i])
         # print(split_sentence[i])
         split_sentence[i] = pattern_language.convert_text_regular_expression(split_sentence[i])
         # print(split_sentence[i])
         split_sentence[i] = pattern_language.revert_regular_expression(split_sentence[i])
+
+        # 변환
+
         # print(split_sentence[i])
         result_sentence += split_sentence[i]
 
@@ -114,11 +120,14 @@ if __name__ == '__main__':
         "어 아직 어 못 만났습니다 앞으로 코백회 협의체를 만나시면서 피해자들의",
         "이만 어 이십오만 건이기 때문에 아 이천오백만 건이기 때문에 스토탈",
         "이 말씀이신 거죠 알겠습니다 오십대 백신접종 확대에 관해서 어 어 질의하도록 하겠습니다.",
+        "내 이메일 주소는 제이오이골뱅이지메일닷컴이야",
+        "내 점수는 오십오점이야",
+        "오점이야",
     ]
     for item in text:
         # print(item)
         print(item)
-        # print(tag_correction.FilterNone_toNR(item,tag_correction.FilterNR_toNone(item,  pos.get_pos(item))))
+        print(tag_correction.FilterNone_toNR(item,tag_correction.FilterNR_toNone(item,  pos.get_pos(item))))
         item = korean2num(item)
         print(item)
         print()
