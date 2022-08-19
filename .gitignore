@@ -128,7 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-test/*
-!test/README.md
+test/stt
+!test
 
 .vscode/
