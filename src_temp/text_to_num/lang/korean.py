@@ -6,14 +6,11 @@ except:
     from base import Language
 
 MULTIPLIERS = {
-    "십": 10,
-    "백": 100,
-    "천": 1000,
-    "만": 10000,
-    "억": 100000000,
-    "조": 1000000000000,
-    "경": 10000000000000000,
-    "해": 100000000000000000000,
+    "만": 1_0000,
+    "억": 1_0000_0000,
+    "조": 1_0000_0000_0000,
+    "경": 1_0000_0000_0000_0000,
+    "해": 1_0000_0000_0000_0000_0000,
 }
 
 UNITS: Dict[str, int] = {
@@ -27,6 +24,12 @@ UNITS: Dict[str, int] = {
     "팔": 8,
     "구": 9,
 }
+
+STENS: Dict[str, int] = {"십": 10}
+
+HUNDRED = {"백": 100}
+
+THOUSAND = {"천": 1000}
 
 NATIVE_MULTIPLIERS = {
     "열": "십",
@@ -62,6 +65,10 @@ NATIVE_MTENS = {
 
 NUMBERS = MULTIPLIERS.copy()
 NUMBERS.update(UNITS)
+NUMBERS.update(STENS)
+NUMBERS.update(HUNDRED)
+NUMBERS.update(THOUSAND)
+
 
 NATIVE_NUMBERS = NATIVE_MULTIPLIERS.copy()
 NATIVE_NUMBERS.update(NATIVE_UNITS)
@@ -71,12 +78,23 @@ class Korean(Language):
 
     MULTIPLIERS = MULTIPLIERS
     UNITS = UNITS
+    STENS = STENS
+    HUNDRED = HUNDRED
+    THOUSAND = THOUSAND
     NUMBERS = NUMBERS
 
-    ZERO = {
-        "영": "0",
-        "공": "0",
-    }
+    SIGN = {"더하기": "+", "빼기": "-"}
+    ZERO = {"영", "공",}
+    DECIMAL_SEP = "점"
+    DECIMAL_SYM = "."
+
+    AND_NUMS: Set[str] = set()
+    AND = " "
+    NEVER_IF_ALONE = {}
+
+    RELAXED: Dict[str, Tuple[str, str]] = {}
+
+    simplify_check_coef_appliable: bool = False
 
     def native2chinese(self, word: str) -> Optional[str]:
         """Convert native number to chinese.

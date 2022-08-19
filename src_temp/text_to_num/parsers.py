@@ -4,7 +4,7 @@ Convert spelled numbers into numeric values or digit strings.
 
 from typing import List, Optional
 
-from lang import Language
+from lang import Language, LANG
 
 class WordStreamValueParserInterface:
     """Interface for language-dependent 'WordStreamValueParser'"""
@@ -34,7 +34,7 @@ class WordStreamValueParser(WordStreamValueParserInterface):
     corresponding numeric (integer) value.
     The algorithm is based on the observation that humans gather the
     digits by group of three to more easily speak them out.
-    And indeed, the language uses powers of 1000 to structure big numbers.
+    And indeed, the language uses powers of 10000 to structure big numbers.
     Public API:
         - ``self.push(word)``
         - ``self.value: int``
@@ -47,8 +47,8 @@ class WordStreamValueParser(WordStreamValueParserInterface):
         """
         super().__init__(lang, relaxed)
         self.skip: Optional[str] = None
-        self.n000_val: int = 0  # the number value part > 1000
-        self.grp_val: int = 0  # the current three digit group value
+        self.n000_val: int = 0  # the number value part > 1000 or 10000
+        self.grp_val: int = 0  # the current three/four digit group value
         self.last_word: Optional[
             str
         ] = None  # the last valid word for the current group
@@ -124,20 +124,25 @@ class WordStreamValueParser(WordStreamValueParserInterface):
         again from the last word you tried (the one that has just been rejected).
         """
         if not word:
+            print("word is empty")
             return False
 
         if word == self.lang.AND and look_ahead in self.lang.AND_NUMS:
+            print("and and char ahead isn num")
             return True
 
         word = self.lang.normalize(word)
         if word not in self.lang.NUMBERS:
+            print("word not in NUMBERS")
             return False
 
         RELAXED = self.lang.RELAXED
 
         if word in self.lang.MULTIPLIERS:
+            print("word in MULTIPLIERS")
             coef = self.lang.MULTIPLIERS[word]
             if not self.is_coef_appliable(coef):
+                print("not coef_appliable. uh oh")
                 return False
             # a multiplier can not be applied to a value bigger than itself,
             # so it must be applied to the current group
@@ -157,20 +162,26 @@ class WordStreamValueParser(WordStreamValueParserInterface):
             and look_ahead.startswith(RELAXED[word][0])
             and self.group_expects(RELAXED[word][1], update=False)
         ):
+            print("word is relaxed and in RELAXED")
             self.skip = RELAXED[word][0]
             self.grp_val += self.lang.NUMBERS[RELAXED[word][1]]
         elif self.skip and word.startswith(self.skip):
+            print("skip??? wtf")
             self.skip = None
         elif self.group_expects(word):
+            print("group expects word????")
             if word in self.lang.HUNDRED:
                 self.grp_val = (
                     100 * self.grp_val if self.grp_val else self.lang.HUNDRED[word]
                 )
             elif word in self.lang.MHUNDREDS:
+                print("word in MHUNDREDS")
                 self.grp_val = self.lang.MHUNDREDS[word]
             else:
+                print("word NOT in MHUNDREDS")
                 self.grp_val += self.lang.NUMBERS[word]
         else:
+            print("ELSE BITCHES")
             self.skip = None
             return False
         return True
@@ -340,4 +351,21 @@ class WordToDigitParser:
 
         self.open = True
         self.last_word = word
-        return True
+        return 
+        
+
+if __name__ == "__main__":
+    language: Language
+    language = LANG["kr"]
+    num_parser = WordStreamValueParser(language, relaxed=False)
+
+    texts = [
+        "백일",
+        # "오천육백",
+        # "사조구천칠백오십이억육만오천이십"
+    ]
+
+    for t in texts:
+        for c in t:
+            num_parser.push(c)
+        print(num_parser.value)
