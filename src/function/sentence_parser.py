@@ -2,10 +2,12 @@ from function import *
 from util import *
 from util.transform_index import get_txt_ind_impr
 import os
+import json
 _dir = os.path.dirname(os.path.abspath(__file__))
 path = os.path.join(_dir, '../../resource/bad_words.txt')
 
 BAD_WORDS = load_list(path)
+NUM = ["공","영","일","이","삼","사","오","육","칠","팔","구","십","백","천","만","억","조"]
 
 def remove_bad_words(numbers: list) -> list:
     for bad_word in BAD_WORDS:
@@ -26,6 +28,54 @@ def exceptionNR(nr_list: list):
                     copy[ind] = null_info
     return copy
 
+def List_Loader():
+    with open(os.path.join(_dir, '../../resource/nnbc.json'),"r",encoding="UTF-8-sig") as json_file:
+        suffix_list = json.load(json_file)
+    prefix_list = list()
+    with open(os.path.join(_dir, '../../resource/prefix.txt'),"r",encoding = "UTF-8") as txt:
+        for line in txt.readlines():
+            prefix_list.append(line.strip())
+    return prefix_list,suffix_list
+
+def CheckAffix(sentence,num_list):
+    prefix_list,suffix_list = List_Loader()
+    filtered_num_list = list()
+    for num in num_list:
+        remove_word = True
+        for prefix in prefix_list:
+            if sentence[:num[1]].strip().endswith(prefix):
+                remove_word = False
+        for suffix in suffix_list:
+            if sentence[num[1]+len(num[0]):].strip().startswith(suffix):
+                remove_word = False
+        if not remove_word:
+            filtered_num_list.append(num)
+    return filtered_num_list
+
+def CheckAffix_in_Raw_Data(sentence):
+    list_index_of_possible_num = list()
+    for ind, char in enumerate(sentence):
+        if char in NUM:
+            list_index_of_possible_num.append(ind)
+    temp_word = ""
+    at_where = -1
+    list_final_num = list()
+    for i, index in enumerate(list_index_of_possible_num):
+        if temp_word =="":
+            at_where = index
+            temp_word += sentence[index]
+            continue
+        else:
+            if index - list_index_of_possible_num[i-1] == 1:
+                temp_word += sentence[index]
+            else:
+                list_final_num.append([temp_word, at_where])
+                temp_word = sentence[index]
+                at_where= index
+    if temp_word != "":
+        list_final_num.append([temp_word,at_where])
+    list_final_num = CheckAffix(sentence, list_final_num)
+    return list_final_num
 
 def BringNumber(sentence: str, sentence_pos: list) -> list:
     """문장에서 NR숫자들을 element로 가지는 list를 반환"""
