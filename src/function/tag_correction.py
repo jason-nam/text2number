@@ -1,7 +1,7 @@
 UNITS = ["일", "이", "삼", "사", "오", "육", "칠", "팔", "구"]
 #띄워쓰기 없어야하는가 -> 없어야하는경우 True, 상관없는 경우 False
 #[해당하는 특정포스, 앞인지뒤인지, 띄워쓰기 없어야하는가,NRcheck계속가야하는지]
-list_nr_to_null = [[('범','NNBC'),-1,False,True],[('몇','MM'),1,True,True],[("제","NNBC"),-1,True,True],[("한","MM"),1,True,False],[("쓰리","NR"),1,False,False],[("포","NR"),1,False,False],[("파이브","NR"),1,False,False]]
+list_nr_to_null = [[('범','NNBC'),-1,False,True],[('몇','MM'),1,True,True],[("제","NNBC"),-1,True,True],[("한","MM"),1,True,False],[("쓰리","NR"),1,False,False],[("포","NR"),1,False,False],[("파이브","NR"),1,False,False],[("이런","NR"),0,False,False]]
 list_not_to_nr = [[("쪽","NNB"),-1,False, True],[('인','VCP+ETM'),-1,False,True],[("당","XSN"),-1,False,False],[("천","NR"),-1,True,False]]
 
 def get_text_ind(sentence,sentence_pos,ind_pos):
@@ -97,7 +97,7 @@ def FilterNone_toNR(sentence,sentence_pos):
     return sentence_pos   
 
 def correct_tags(sentence, sentence_pos):
-    sentence_pos = resolve_mecab_version_issues(FilterNone_toNR(sentence, FilterNR_toNone(sentence, sentence_pos)))
+    sentence_pos = resolve_mecab_version_issues(FilterNR_toNone(sentence, FilterNone_toNR(sentence, sentence_pos)))
     return sentence_pos
 
 if __name__ == '__main__':
