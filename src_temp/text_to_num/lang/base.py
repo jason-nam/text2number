@@ -6,11 +6,13 @@ class Language:
     MULTIPLIERS: Dict[str, int]
     UNITS: Dict[str, int]
     STENS: Dict[str, int]
+    TEN: Dict[str, int]
     MTENS: Dict[str, int]
     MTENS_WSTENS: Set[str]
     HUNDRED: Dict[str, int]
     MHUNDREDS: Dict[str, int] = {}
     THOUSAND: Dict[str, int]
+    MTHOUSANDS: Dict[str, int]
     NUMBERS: Dict[str, int]
 
     SIGN: Dict[str, str]

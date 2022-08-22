@@ -25,11 +25,104 @@ UNITS: Dict[str, int] = {
     "구": 9,
 }
 
-STENS: Dict[str, int] = {"십": 10}
+STENS: Dict[str, int] = {}
+
+TEN: Dict[str, int] = {"십": 10}
+
+MTENS: Dict[str, int] = {
+    word: value * 10
+    for value, word in enumerate(
+        "십 이십 삼십 사십 오십 육십 칠십 팔십 구십".split(), 1
+    )
+}
+
+MTENS_WSTENS: Set[str] = set()
 
 HUNDRED = {"백": 100}
 
+MHUNDREDS: Dict[str, int] = {
+    word: value * 100
+    for value, word in enumerate(
+        "백 이백 삼백 사백 오백 육백 칠백 팔백 구백".split(), 1
+    )
+}
+
 THOUSAND = {"천": 1000}
+
+MTHOUSANDS: Dict[str, int] = {
+    word: value * 1000
+    for value, word in enumerate(
+        "천 이천 삼천 사천 오천 육천 칠천 팔천 구천".split(), 1
+    )
+}
+
+CTENS: Dict[str, int] = {
+    "".join((ten_word, unit_word)): ten_val + unit_val
+    for ten_word, ten_val in MTENS.items()
+    for unit_word, unit_val in UNITS.items()
+}
+
+CHUNDREDS: Dict[str, int] = {
+    "".join((hundred_word, cten_word)): hundred_val + cten_val
+    for hundred_word, hundred_val in MHUNDREDS.items()
+    for cten_word, cten_val in CTENS.items()
+}
+
+CHUNDREDS.update({
+    "".join((hundred_word, unit_word)): hundred_val + unit_val
+    for hundred_word, hundred_val in MHUNDREDS.items()
+    for unit_word, unit_val in UNITS.items()
+})
+
+CHUNDREDS.update({
+    "".join((hundred_word, ten_word)): hundred_val + ten_val
+    for hundred_word, hundred_val in MHUNDREDS.items()
+    for ten_word, ten_val in MTENS.items()
+})
+
+CTHOUSANDS: Dict[str, int] = {
+    "".join((thousand_word, cten_word)): thousand_val + cten_val
+    for thousand_word, thousand_val in MTHOUSANDS.items()
+    for cten_word, cten_val in CTENS.items()
+}
+
+CTHOUSANDS.update({
+    "".join((thousand_word, chundred_word)): thousand_val + chundred_val
+    for thousand_word, thousand_val in MTHOUSANDS.items()
+    for chundred_word, chundred_val in CHUNDREDS.items()
+})
+
+CTHOUSANDS.update({
+    "".join((thousand_word, unit_word)): thousand_val + unit_val
+    for thousand_word, thousand_val in MTHOUSANDS.items()
+    for unit_word, unit_val in UNITS.items()
+})
+
+CTHOUSANDS.update({
+    "".join((thousand_word, ten_word)): thousand_val + ten_val
+    for thousand_word, thousand_val in MTHOUSANDS.items()
+    for ten_word, ten_val in MTENS.items()
+})
+
+CTHOUSANDS.update({
+    "".join((thousand_word, hundred_word)): thousand_val + hundred_val
+    for thousand_word, thousand_val in MTHOUSANDS.items()
+    for hundred_word, hundred_val in MHUNDREDS.items()
+})
+
+COMPOSITES = CTENS.copy()
+COMPOSITES.update(CHUNDREDS)
+COMPOSITES.update(CTHOUSANDS)
+
+NUMBERS = MULTIPLIERS.copy()
+NUMBERS.update(UNITS)
+NUMBERS.update(TEN)
+NUMBERS.update(MTENS)
+NUMBERS.update(HUNDRED)
+NUMBERS.update(MHUNDREDS)
+NUMBERS.update(THOUSAND)
+NUMBERS.update(MTHOUSANDS)
+# NUMBERS.update(COMPOSITES)
 
 NATIVE_MULTIPLIERS = {
     "열": "십",
@@ -63,13 +156,6 @@ NATIVE_MTENS = {
     "아흔": "구십",
 }
 
-NUMBERS = MULTIPLIERS.copy()
-NUMBERS.update(UNITS)
-NUMBERS.update(STENS)
-NUMBERS.update(HUNDRED)
-NUMBERS.update(THOUSAND)
-
-
 NATIVE_NUMBERS = NATIVE_MULTIPLIERS.copy()
 NATIVE_NUMBERS.update(NATIVE_UNITS)
 NATIVE_NUMBERS.update(NATIVE_MTENS)
@@ -79,8 +165,13 @@ class Korean(Language):
     MULTIPLIERS = MULTIPLIERS
     UNITS = UNITS
     STENS = STENS
+    TEN = TEN
+    MTENS = MTENS
+    MTENS_WSTENS = MTENS_WSTENS
     HUNDRED = HUNDRED
+    MHUNDREDS = MHUNDREDS
     THOUSAND = THOUSAND
+    MTHOUSANDS = MTHOUSANDS
     NUMBERS = NUMBERS
 
     SIGN = {"더하기": "+", "빼기": "-"}
@@ -133,6 +224,3 @@ class Korean(Language):
 
     def normalize(self, word: str) -> str:
         return word
-
-# self = ""
-# print(Korean.native2chinese(self, "마흔둘"))

@@ -51,6 +51,8 @@ def text2num(
     # Default
     num_parser = WordStreamValueParser(language, relaxed=relaxed)
     tokens = list(dropwhile(lambda x: x in language.ZERO, text.split()))
+    tokens = list(dropwhile(lambda x: x in language.ZERO, text))
+    print(tokens)
     if not all(
         num_parser.push(word, ahead) 
         for word, ahead in look_ahead(tokens)
@@ -122,4 +124,32 @@ def alpha2digit(
 
 
 if __name__ == "__main__":
-    print(text2num("내 나이는 오십이야.", "kr"))
+    print(text2num("구조이천오백이십삼억오백만칠천사백육십일", "kr"))
+    print(text2num("오천이백", "kr"))
+    
+    # print(text2num("삼삼오오", "kr"))
+
+    count = "104080043691234"
+    nstring = ["", "십", "백", "천", "만", "십", "백", "천", "억", "십", "백", "천", "조", "십", "백", "천"]
+    nlist = list(count)
+    nlen = len(count)
+    nd = {
+        "1": "일",
+        "2": "이",
+        "3": "삼",
+        "4": "사",
+        "5": "오",
+        "6": "육",
+        "7": "칠",
+        "8": "팔",
+        "9": "구",
+        "0": ""
+    }
+    nlen = nlen - 1
+    for i in nlist:
+        if i == "0":
+            nlen -= 1
+            continue
+        else:
+            print(f"{nd[i]}{nstring[nlen]}", end="")
+            nlen -= 1

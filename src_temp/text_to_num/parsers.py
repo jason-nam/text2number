@@ -67,13 +67,24 @@ class WordStreamValueParser(WordStreamValueParserInterface):
             expected = True
         elif (
             self.last_word in self.lang.UNITS
-            and self.grp_val < 10
+            # and self.grp_val < 10
             or self.last_word in self.lang.STENS
             and self.grp_val < 20
         ):
-            expected = word in self.lang.HUNDRED
+            expected = (
+                word in self.lang.HUNDRED
+                or word in self.lang.THOUSAND
+                or word in self.lang.TEN
+            )
+        elif self.last_word in self.lang.MTHOUSANDS:
+            expected = (
+                word not in self.lang.MTHOUSANDS
+            )
         elif self.last_word in self.lang.MHUNDREDS:
-            expected = True
+            expected = (
+                word not in self.lang.MTHOUSANDS
+                and word not in self.lang.MHUNDREDS
+            )
         elif self.last_word in self.lang.MTENS:
             expected = (
                 word in self.lang.UNITS
@@ -92,22 +103,16 @@ class WordStreamValueParser(WordStreamValueParserInterface):
             return coef != self.value
 
         """Is this multiplier expected?"""
-        if coef > self.value and (self.value > 0 or coef == 1000):
+        if coef > self.value and (self.value > 0 or coef == 10000):
             # a multiplier can be applied to anything lesser than itself,
-            # as long as it not zero (special case for 1000 which then implies 1)
+            # as long as it not zero (special case for 10000 which then implies 1)
             return True
-        if coef * coef <= self.n000_val:
+        if coef < self.n000_val:
             # a multiplier can not be applied to a value bigger than itself,
             # so it must be applied to the current group only.
-            # ex. for "mille": "deux millions cent cinquante mille"
-            # ex. for "millions": "trois milliard deux cent millions"
-            # But not twice: "dix mille cinq mille" is invalid for example. Therefore,
-            # we test the square of ``coef``.
             return (
-                self.grp_val > 0 or coef == 1000
+                self.grp_val > 0 or coef == 10000
             )  # "mille" without unit      is additive
-        # TODO: There is one exception to the above rule: "de milliard"
-        # ex. : "mille milliards de milliards"
         return False
 
     def push(self, word: str, look_ahead: Optional[str] = None) -> bool:
@@ -124,35 +129,30 @@ class WordStreamValueParser(WordStreamValueParserInterface):
         again from the last word you tried (the one that has just been rejected).
         """
         if not word:
-            print("word is empty")
             return False
 
         if word == self.lang.AND and look_ahead in self.lang.AND_NUMS:
-            print("and and char ahead isn num")
             return True
 
         word = self.lang.normalize(word)
         if word not in self.lang.NUMBERS:
-            print("word not in NUMBERS")
             return False
 
         RELAXED = self.lang.RELAXED
 
         if word in self.lang.MULTIPLIERS:
-            print("word in MULTIPLIERS")
             coef = self.lang.MULTIPLIERS[word]
             if not self.is_coef_appliable(coef):
-                print("not coef_appliable. uh oh")
                 return False
             # a multiplier can not be applied to a value bigger than itself,
             # so it must be applied to the current group
+            
             if coef < self.n000_val:
                 self.n000_val = self.n000_val + coef * (
                     self.grp_val or 1
-                )  # or 1 for "mille"
+                )
             else:
                 self.n000_val = (self.value or 1) * coef
-
             self.grp_val = 0
             self.last_word = None
         elif (
@@ -162,26 +162,36 @@ class WordStreamValueParser(WordStreamValueParserInterface):
             and look_ahead.startswith(RELAXED[word][0])
             and self.group_expects(RELAXED[word][1], update=False)
         ):
-            print("word is relaxed and in RELAXED")
             self.skip = RELAXED[word][0]
             self.grp_val += self.lang.NUMBERS[RELAXED[word][1]]
         elif self.skip and word.startswith(self.skip):
-            print("skip??? wtf")
             self.skip = None
         elif self.group_expects(word):
-            print("group expects word????")
-            if word in self.lang.HUNDRED:
+            if word in self.lang.THOUSAND:
                 self.grp_val = (
-                    100 * self.grp_val if self.grp_val else self.lang.HUNDRED[word]
+                    1000 * self.grp_val if self.grp_val else self.lang.THOUSAND[word]
+                )
+            elif word in self.lang.MTHOUSANDS:
+                self.grp_val = self.lang.MTHOUSANDS[word]
+            elif word in self.lang.HUNDRED:
+                self.grp_val = (
+                    100 * (self.grp_val % 10) + 10 * (self.grp_val // 10) if self.grp_val else self.grp_val + self.lang.HUNDRED[word]
                 )
             elif word in self.lang.MHUNDREDS:
-                print("word in MHUNDREDS")
-                self.grp_val = self.lang.MHUNDREDS[word]
+                self.grp_val = (
+                    self.grp_val + self.lang.MHUNDREDS[word] if self.grp_val else self.lang.MHUNDREDS[word]
+                )
+            elif word in self.lang.TEN:
+                self.grp_val = (
+                    10 * (self.grp_val % 10) + 10 * (self.grp_val // 10) if self.grp_val else self.grp_val + self.lang.TEN[word]
+                )
+            elif word in self.lang.MTENS:
+                self.grp_val = (
+                    self.grp_val + self.lang.MTENS[word] if self.grp_val else self.lang.MTENS[word]
+                )
             else:
-                print("word NOT in MHUNDREDS")
                 self.grp_val += self.lang.NUMBERS[word]
         else:
-            print("ELSE BITCHES")
             self.skip = None
             return False
         return True
@@ -360,12 +370,21 @@ if __name__ == "__main__":
     num_parser = WordStreamValueParser(language, relaxed=False)
 
     texts = [
-        "백일",
-        # "오천육백",
+        # ["오", "일"],
+        # ["팔", "조", "칠", "만", "오", "백", "십", "이"],
+        # ['삼', '조', '오', '백', '육', '십', '일'],
+        ['구', '조', '이', '천', '오', '백', '이', '십', '삼', '억'],
+        # ['구', '조', '이', '천', '오', '백', '이', '십', '삼', '억', '오', '백', '만', '칠', '천', '사', '백', '육', '십', '일']
         # "사조구천칠백오십이억육만오천이십"
     ]
-
+    
     for t in texts:
+        language: Language
+        language = LANG["kr"]
+        num_parser = WordStreamValueParser(language, relaxed=False)
+        
         for c in t:
+            print(c)
             num_parser.push(c)
-        print(num_parser.value)
+            # print(num_parser.value)
+        print(num_parser.value, "\n===========")
