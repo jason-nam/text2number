@@ -76,14 +76,38 @@ class WordStreamValueParser(WordStreamValueParserInterface):
                 or word in self.lang.THOUSAND
                 or word in self.lang.TEN
             )
+        elif self.last_word in self.lang.THOUSAND:
+            expected = (
+                word not in self.lang.THOUSAND
+                and word not in self.lang.MTHOUSANDS
+            )
+        elif self.last_word in self.lang.HUNDRED:
+            expected = (
+                word not in self.lang.THOUSAND
+                and word not in self.lang.MTHOUSANDS
+                and word not in self.lang.HUNDRED
+                and word not in self.lang.MHUNDREDS
+            )
+        elif self.last_word in self.lang.TEN:
+            expected = (
+                word not in self.lang.THOUSAND
+                and word not in self.lang.MTHOUSANDS
+                and word not in self.lang.HUNDRED
+                and word not in self.lang.MHUNDREDS
+                and word not in self.lang.TEN
+                and word not in self.lang.MTENS
+            )
         elif self.last_word in self.lang.MTHOUSANDS:
             expected = (
                 word not in self.lang.MTHOUSANDS
+                and word not in self.lang.THOUSAND
             )
         elif self.last_word in self.lang.MHUNDREDS:
             expected = (
                 word not in self.lang.MTHOUSANDS
+                and word not in self.lang.THOUSAND
                 and word not in self.lang.MHUNDREDS
+                and word not in self.lang.HUNDRED
             )
         elif self.last_word in self.lang.MTENS:
             expected = (
@@ -91,8 +115,6 @@ class WordStreamValueParser(WordStreamValueParserInterface):
                 or word in self.lang.STENS
                 and self.last_word in self.lang.MTENS_WSTENS
             )
-        elif self.last_word in self.lang.HUNDRED:
-            expected = word not in self.lang.HUNDRED
 
         if update:
             self.last_word = word
@@ -175,7 +197,7 @@ class WordStreamValueParser(WordStreamValueParserInterface):
                 self.grp_val = self.lang.MTHOUSANDS[word]
             elif word in self.lang.HUNDRED:
                 self.grp_val = (
-                    100 * (self.grp_val % 10) + 10 * (self.grp_val // 10) if self.grp_val else self.grp_val + self.lang.HUNDRED[word]
+                    100 * (self.grp_val % 10) + 10 * (self.grp_val // 10) if self.grp_val and (self.grp_val % 10) != 0 else self.grp_val + self.lang.HUNDRED[word]
                 )
             elif word in self.lang.MHUNDREDS:
                 self.grp_val = (
@@ -183,7 +205,7 @@ class WordStreamValueParser(WordStreamValueParserInterface):
                 )
             elif word in self.lang.TEN:
                 self.grp_val = (
-                    10 * (self.grp_val % 10) + 10 * (self.grp_val // 10) if self.grp_val else self.grp_val + self.lang.TEN[word]
+                    10 * (self.grp_val % 10) + 10 * (self.grp_val // 10) if self.grp_val and (self.grp_val % 10) != 0 else self.grp_val + self.lang.TEN[word]
                 )
             elif word in self.lang.MTENS:
                 self.grp_val = (
@@ -192,9 +214,11 @@ class WordStreamValueParser(WordStreamValueParserInterface):
             else:
                 self.grp_val += self.lang.NUMBERS[word]
         else:
+            print("na")
             self.skip = None
             return False
         return True
+
 
 class WordToDigitParser:
     """Words to digit transcriber.
@@ -370,12 +394,7 @@ if __name__ == "__main__":
     num_parser = WordStreamValueParser(language, relaxed=False)
 
     texts = [
-        # ["오", "일"],
-        # ["팔", "조", "칠", "만", "오", "백", "십", "이"],
-        # ['삼', '조', '오', '백', '육', '십', '일'],
-        ['구', '조', '이', '천', '오', '백', '이', '십', '삼', '억'],
-        # ['구', '조', '이', '천', '오', '백', '이', '십', '삼', '억', '오', '백', '만', '칠', '천', '사', '백', '육', '십', '일']
-        # "사조구천칠백오십이억육만오천이십"
+        ['오', '천', '팔', '백', '오', '십', '오', '조', '억', '육', '천', '오', '백', '사', '십', '팔', '만', '사', '천', '이', '백', '오', '십', '칠'],
     ]
     
     for t in texts:
@@ -387,4 +406,4 @@ if __name__ == "__main__":
             print(c)
             num_parser.push(c)
             # print(num_parser.value)
-        print(num_parser.value, "\n===========")
+        print(num_parser.value)

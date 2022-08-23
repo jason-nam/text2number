@@ -32,7 +32,7 @@ TEN: Dict[str, int] = {"십": 10}
 MTENS: Dict[str, int] = {
     word: value * 10
     for value, word in enumerate(
-        "십 이십 삼십 사십 오십 육십 칠십 팔십 구십".split(), 1
+        "이십 삼십 사십 오십 육십 칠십 팔십 구십".split(), 2
     )
 }
 
@@ -43,7 +43,7 @@ HUNDRED = {"백": 100}
 MHUNDREDS: Dict[str, int] = {
     word: value * 100
     for value, word in enumerate(
-        "백 이백 삼백 사백 오백 육백 칠백 팔백 구백".split(), 1
+        "이백 삼백 사백 오백 육백 칠백 팔백 구백".split(), 2
     )
 }
 
@@ -52,7 +52,7 @@ THOUSAND = {"천": 1000}
 MTHOUSANDS: Dict[str, int] = {
     word: value * 1000
     for value, word in enumerate(
-        "천 이천 삼천 사천 오천 육천 칠천 팔천 구천".split(), 1
+        "이천 삼천 사천 오천 육천 칠천 팔천 구천".split(), 2
     )
 }
 
