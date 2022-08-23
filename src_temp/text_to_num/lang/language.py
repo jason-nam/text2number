@@ -30,12 +30,6 @@ class Language:
 
     simplify_check_coef_appliable: bool = False
 
-    def native2chinese(self, word: str) -> Optional[str]:
-        """Convert native number to chinese.
-        Return None if word is not an native or is better left in letters.
-        """
-        return NotImplemented
-
     def ord2card(self, word: str) -> Optional[str]:
         """Convert ordinal number to cardinal.
         Return None if word is not an ordinal or is better left in letters.

@@ -1,9 +1,9 @@
 from typing import Dict, Optional, Set, Tuple
 
 try:
-    from .base import Language
+    from .language import Language
 except:
-    from base import Language
+    from language import Language
 #
 # CONSTANTS
 # Built once on import.

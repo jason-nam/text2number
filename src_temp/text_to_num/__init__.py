@@ -1,1 +1,1 @@
-from .transforms import alpha2digit
+from .transforms import text2num

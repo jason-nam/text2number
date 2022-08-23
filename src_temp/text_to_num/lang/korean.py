@@ -1,9 +1,9 @@
 from typing import Dict, Optional, Set, Tuple
 
 try:
-    from .base import Language
+    from .language import Language
 except:
-    from base import Language
+    from language import Language
 
 MULTIPLIERS = {
     "만": 1_0000,
@@ -189,7 +189,7 @@ class Korean(Language):
 
     def native2chinese(self, word: str) -> Optional[str]:
         """Convert native number to chinese.
-        Return None if word is not an ordinal or is better left in letters.
+        Return None if word is not a native number.
         """
 
         suff = True if any(num in word for num in NATIVE_NUMBERS) else False
