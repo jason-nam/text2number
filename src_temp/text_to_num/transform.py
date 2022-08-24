@@ -2,14 +2,12 @@ import re
 from itertools import dropwhile
 from typing import Any, Iterator, List, Sequence, Tuple, Union, Optional
 
-from .lang import LANG, Language, Korean, English
-from .parsers import (
+from .lang import LANG, Language, Korean
+from .num_parser import (
     WordStreamValueParserInterface,
-    WordStreamValueParser,
     WordStreamValueParserAsian, 
     WordToDigitParser,
 )
-
 
 def look_ahead(sequence: Sequence[Any]) -> Iterator[Tuple[Any, Any]]:
     """Look-ahead iterator.
@@ -46,9 +44,6 @@ def text2num(
     if type(language) is Korean:
         num_parser = WordStreamValueParserAsian(language, relaxed=relaxed)
         tokens = list(dropwhile(lambda x: x in language.ZERO, text))
-    elif type(language) is English:
-        num_parser = WordStreamValueParser(language, relaxed=relaxed)
-        tokens = list(dropwhile(lambda x: x in language.ZERO, text.split()))
     else:
         raise ValueError("invalid lang type for text2num: {}".format(repr(lang)))
 

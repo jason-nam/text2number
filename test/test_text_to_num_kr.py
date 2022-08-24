@@ -39,7 +39,7 @@ def num2text(count: str):
         return stringnum
 
 
-class TestTextToNumEN(TestCase):
+class TestTextToNumKR(TestCase):
     def test_text2num(self):
         num1 = 530_0024_3724
         test1 = num2text(str(num1))
@@ -85,16 +85,4 @@ class TestTextToNumEN(TestCase):
 if __name__ == "__main__":
     main()
 
-    # for _ in range(1000):
-    # while True:
-    #     count = randint(0, 1_0000_0000_0000_0000)
-    #     numkr = num2text(count=str(count))
-    #     print(count)
-    #     try:
-    #         num = text2num(numkr, "kr")
-    #     except:
-    #         raise
-
-    #     if num != count:
-    #         print(num)
-    #         raise
+    

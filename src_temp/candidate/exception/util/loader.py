@@ -1,5 +1,9 @@
-def load_dictionary(path):
-    result = {}
+from typing import Any, Dict, List
+
+def load_dictionary(path: str) -> Dict[Any, Any]:
+    """
+    """
+    result: Dict[Any, Any] = {}
     with open(path, 'r', encoding="utf8") as file:
         for line in file.readlines():
             try:
@@ -10,8 +14,10 @@ def load_dictionary(path):
                 pass
     return result
 
-def load_list(path):
-    result = []
+def load_list(path: str) -> List[Any]:
+    """
+    """
+    result: Dict[Any, Any] = []
     with open(path, 'r', encoding="utf8") as file:
         for line in file.readlines():
             try:
