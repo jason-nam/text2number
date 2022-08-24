@@ -4,7 +4,7 @@ Convert spelled numbers into numeric values or digit strings.
 
 from typing import List, Optional
 
-from lang import Language, LANG
+from .lang import Language, LANG
 
 class WordStreamValueParserInterface:
     """Interface for language-dependent 'WordStreamValueParser'"""
@@ -273,6 +273,11 @@ class WordStreamValueParserAsian(WordStreamValueParserInterface):
             return coef != self.value
 
         """Is this multiplier expected?"""
+        if self.value == 0:
+            # number can start with a multiplier and multiplier can also
+            # be declared when attached unit is 1 but the unit is not declared.
+            # "일억" without unit would be "억".
+            return True
         if coef > self.value and (self.value > 0 or coef == 10000):
             # a multiplier can be applied to anything lesser than itself,
             # as long as it not zero (special case for 10000 which then implies 1)
@@ -281,7 +286,7 @@ class WordStreamValueParserAsian(WordStreamValueParserInterface):
             # a multiplier can not be applied to a value bigger than itself,
             # so it must be applied to the current group only.
             return (
-                self.grp_val > 0 or coef == 10000
+                self.grp_val >= 0 or coef == 10000
             )  # "mille" without unit      is additive
         return False
 
@@ -362,7 +367,6 @@ class WordStreamValueParserAsian(WordStreamValueParserInterface):
             else:
                 self.grp_val += self.lang.NUMBERS[word]
         else:
-            print("na")
             self.skip = None
             return False
         return True
@@ -537,24 +541,17 @@ class WordToDigitParser:
 
 
 if __name__ == "__main__":
-    language: Language
-    language = LANG["kr"]
-    num_parser = WordStreamValueParser(language, relaxed=False)
-
     texts = [
-        ['오', '천', '팔', '백', '오', '십', '오', '조', '억', '육', '천', '오', '백', '사', '십', '팔', '만', '사', '천', '이', '백', '오', '십', '칠'],
-        ['fifty', 'three', 'billion', 'two', 'hundred', 'forty-three', 'thousand', 'seven', 'hundred', 'twenty-four'],
-        ['two', 'trillion', 'three', 'hundred', 'forty', 'six', 'billion', 'five', 'hundred', 'thirty', 'two', 'million', 'three', 'hundred', 'fifty', 'four', 'thousand', 'two', 'hundred', 'thirty', 'six'],
+        []
     ]
     
     for t in texts:
         language: Language
-        language = LANG["en"]
-        num_parser = WordStreamValueParser(language, relaxed=False)
+        language = LANG["kr"]
+        num_parser = WordStreamValueParserAsian(language, relaxed=False)
         
         for c in t:
             print(" ")
             print(c)
             num_parser.push(c)
-            # print(num_parser.value)
         print(num_parser.value)
