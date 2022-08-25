@@ -64,26 +64,26 @@ class CorrectTags(Unit, Tag):
         """
         """
         for ind,element in enumerate(self.NR_TO_NULL):
-            for ind,pos in enumerate(sentence_pos):
+            for ind,pos in enumerate(self.pos_sent):
                 if pos != () and pos == element[0]:
-                    if sentence_pos[ind+element[-3]]!= () and sentence_pos[ind+element[-3]][1] =='NR':
-                        if element[-2] and not self.is_separated(self.sent, sentence_pos, ind, element[-3]):
+                    if self.pos_sent[ind+element[-3]]!= () and self.pos_sent[ind+element[-3]][1] =='NR':
+                        if element[-2] and not self.is_separated(self.sent, self.pos_sent, ind, element[-3]):
                             #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                            sentence_pos[ind+element[-3]] = (sentence_pos[ind+element[-3]][0], 'Null')
+                            self.pos_sent[ind+element[-3]] = (self.pos_sent[ind+element[-3]][0], 'Null')
                             if element[-1]:
                                 at_where = ind+element[-3]*2
-                                while sentence_pos[at_where][1] =='NR':
+                                while self.pos_sent[at_where][1] =='NR':
                                     #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                                    sentence_pos[at_where] = (sentence_pos[at_where][0],'Null')
+                                    self.pos_sent[at_where] = (self.pos_sent[at_where][0],'Null')
                         elif not element[-2]:
                             #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                            sentence_pos[ind+element[-3]] = (sentence_pos[ind+element[-3]][0], 'Null')
+                            self.pos_sent[ind+element[-3]] = (self.pos_sent[ind+element[-3]][0], 'Null')
                             if element[-1]:
                                 at_where = ind+element[-3]*2
-                                while sentence_pos[at_where][1] =='NR':
+                                while self.pos_sent[at_where][1] =='NR':
                                     #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                                    sentence_pos[at_where] = (sentence_pos[at_where][0],'Null')
-        return sentence_pos                
+                                    self.pos_sent[at_where] = (self.pos_sent[at_where][0],'Null')
+        return self.pos_sent                
                 
     def none_to_nr(self, sentence,sentence_pos):
         """
@@ -177,6 +177,20 @@ class CandidateSentenceParser(CandidateSentenceParserInterface):
     def number_candidate(self) -> List[str]:
         """"""
         return self.num_cand
+
+    def remove(self) -> None:
+        copy = nr_list
+        list_nr_but_no = [
+            '하나','둘','셋','넷','다섯','여섯','여덟','아홉','열',
+            '수십','수백','수천','수만','수억'
+        ]
+        for ind, each_nr in enumerate(nr_list):
+            if each_nr != ():
+                for exception in list_nr_but_no:
+                    if each_nr[0] == exception:
+                        null_info = (each_nr[0],'')
+                        copy[ind] = null_info
+        return copy
 
     def find(sentence: str, sentence_pos: List[Tuple[str, str]]) -> bool:
         """
