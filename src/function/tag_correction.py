@@ -4,19 +4,6 @@ UNITS = ["일", "이", "삼", "사", "오", "육", "칠", "팔", "구"]
 list_nr_to_null = [[('범','NNBC'),-1,False,True],[('몇','MM'),1,True,True],[("제","NNBC"),-1,True,True],[("한","MM"),1,True,False],[("쓰리","NR"),1,False,False],[("포","NR"),1,False,False],[("파이브","NR"),1,False,False],[("이런","NR"),0,False,False]]
 list_not_to_nr = [[("쪽","NNB"),-1,False, True],[('인','VCP+ETM'),-1,False,True],[("당","XSN"),-1,False,False],[("천","NR"),-1,True,False]]
 
-def get_text_ind(sentence,sentence_pos,ind_pos):
-    txt_morph = sentence_pos
-    ind_in_sentence =0
-    copy = sentence[ind_in_sentence:]
-    for ind, morph in enumerate(txt_morph):
-        while copy[0] == ' ':
-            ind_in_sentence += 1
-            copy = sentence[ind_in_sentence]
-        if ind == ind_pos:
-            return ind_in_sentence
-        else:
-            ind_in_sentence += len(morph[0])
-            copy = sentence[ind_in_sentence:]
 
 def resolve_mecab_version_issues(sentence_pos):
     for sentence_pos_index, sentence_pos_element in enumerate(sentence_pos[1:-1], start=1):
@@ -29,8 +16,8 @@ def resolve_mecab_version_issues(sentence_pos):
 
 #("문장",[형태소분석],24(특정형태소 위치), 어느쪽확인해야하는지 1 or -1)
 def SpaceBetween(sentence,sentence_pos, ind_pos, FrontOrBack):
-    ind_of_pos_in_sentence = get_text_ind(sentence,sentence_pos,ind_pos)
-    ind_of_possible_NR_in_sentence = get_text_ind(sentence,sentence_pos,ind_pos+FrontOrBack)
+    ind_of_pos_in_sentence = get_txt_ind_impr(sentence,sentence_pos,ind_pos)
+    ind_of_possible_NR_in_sentence = get_txt_ind_impr(sentence,sentence_pos,ind_pos+FrontOrBack)
     if (ind_of_pos_in_sentence - ind_of_possible_NR_in_sentence) == -1 or(ind_of_pos_in_sentence - ind_of_possible_NR_in_sentence) == 1:
         return False
     return True

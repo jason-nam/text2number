@@ -1,6 +1,6 @@
 from typing import Any, Iterator, List, Sequence, Tuple, Union, Optional
 
-from .util import get_pos, get_text_ind
+from .rule_util import get_pos, get_text_ind
 from .sentence_parser import (
     CandidateSentenceParser,
     CandidateSentenceParserInterface
@@ -16,14 +16,10 @@ def split(sentence: str) -> Iterator[str]:
     sentence_end_index = 0
     for pos_index, pos_element in enumerate(get_pos(sentence)):
         if (
-            any(
-                nominative_case_pos_key == pos_element[0] 
-                for nominative_case_pos_key in NOMINATIVE_KEY
-            ) 
-            and any(
-                nominative_case_pos_tag == pos_element[1] 
-                for nominative_case_pos_tag in NOMINATIVE_TAG
-            )
+            any(nominative_case_pos_key == pos_element[0] 
+                for nominative_case_pos_key in NOMINATIVE_KEY) 
+            and any(nominative_case_pos_tag == pos_element[1] 
+                for nominative_case_pos_tag in NOMINATIVE_TAG)
         ):
             sentence_end_index = get_text_ind(sentence, pos_index) + 2
             yield sentence[sentence_start_index:sentence_end_index]
