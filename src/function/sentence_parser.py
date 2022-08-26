@@ -15,6 +15,7 @@ def remove_bad_words(numbers: list) -> list:
     return numbers
 
 def exceptionNR(nr_list: list):
+    print(nr_list)
     copy = nr_list
     list_nr_but_no = [
         '하나','둘','셋','넷','다섯','여섯','여덟','아홉','열',
@@ -26,6 +27,7 @@ def exceptionNR(nr_list: list):
                 if each_nr[0] == exception:
                     null_info = (each_nr[0],'')
                     copy[ind] = null_info
+    print(copy)
     return copy
 
 def List_Loader():
@@ -161,6 +163,10 @@ def PutNumber(sentence: str, sentence_pos: list) -> str:
         ind_in_sentence = num[1] + len(num[0])
     return result + sentence[ind_in_sentence:]
 
+
+if __name__ == "__main__":
+    item = "난 오십육 살 이야."
+    print(PutNumber(item, get_pos(item)))
 
 # from unittest import result
 # from xml.etree.ElementTree import TreeBuilder

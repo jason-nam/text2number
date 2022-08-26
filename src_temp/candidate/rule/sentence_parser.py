@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 from .rule_util import get_pos, get_text_ind, get_pos_ind
 
@@ -9,7 +9,7 @@ class Unit:
     UNITS = ["일", "이", "삼", "사", "오", "육", "칠", "팔", "구"]
 
 
-class Tag:
+class CorrectTag:
     """
     """
     NR_TO_NULL = [
@@ -24,43 +24,49 @@ class Tag:
     ]
 
 
-class CorrectTags(Unit, Tag):
+class Tag(Unit, CorrectTag):
     """
     """
 
     def __init__(self) -> None:
         """"""
-        self.sent: Optional[str] = None 
-        self.pos_sent: Optional[List[Tuple[str, str]]] = None
+        self.sent: Optional[str] = None
+        self.tag_sent: Optional[List[Tuple[str, str]]] = None
+        self.all_sent = ""
+        self.all_tag_sent = []
 
-    def is_separated(self, pos_ind: int, dir: int) -> bool:
+    @property
+    def tag_sentence(self) -> List[Tuple[str, str]]:
+        return self.tag_sent
+
+    def _is_separated(self, tag_ind: int, dir: int) -> bool:
         """
         """
         if not self.sent:
             return False
-        text_ind = get_text_ind(self.sent, self.pos_sent, pos_ind)
-        target_ind = get_text_ind(self.sent, self.pos_sent, pos_ind + dir)
+        text_ind = get_text_ind(self.sent, tag_ind)
+        target_ind = get_text_ind(self.sent, tag_ind + dir)
         return not (
             (text_ind - target_ind) == -1 
             or (text_ind - target_ind) == 1)
     
-    def resolve_mecab_version_issues(self) -> bool:
+    def _resolve_mecab_version_issue(self) -> bool:
         """
         """
-        if not self.pos_sent:
+        if not self.tag_sent:
             return False
-        for ind, (key, tag) in enumerate(self.pos_sent[1:-1].items(), start=1):
+        for ind, (key, tag) in enumerate(self.tag_sent[1:-1], start=1):
             if not tag == "NR":
                 continue
             else:
                 if all(
                     front_back_pos_element in ["NNG", "NNP"] 
-                    for front_back_pos_element in [self.pos_sent[ind-1][1], self.pos_sent[ind+1][1]]
+                    for front_back_pos_element in [self.tag_sent[ind-1][1], self.tag_sent[ind+1][1]]
                 ):
-                    self.pos_sent[ind] = (key, "Null")
+                    self.tag_sent[ind] = (key, "Null")
         return True
 
-    def nr_to_none(self):
+    def num_to_none(self):
         """
         """
         for ind,element in enumerate(self.NR_TO_NULL):
@@ -85,7 +91,7 @@ class CorrectTags(Unit, Tag):
                                     self.pos_sent[at_where] = (self.pos_sent[at_where][0],'Null')
         return self.pos_sent                
                 
-    def none_to_nr(self, sentence,sentence_pos):
+    def none_to_num(self, sentence,sentence_pos):
         """
         """
         for ind, element in enumerate(self.NULL_TO_NR):
@@ -119,19 +125,41 @@ class CorrectTags(Unit, Tag):
                                     sentence_pos[at_where] = (sentence_pos[at_where][0], 'NR')
         return sentence_pos   
 
-    def correct_tags(self, sentence, pos_sent):
+    def set_key(self, ind: int, key: str) -> bool:
+        if (
+            not key
+            or ind < 0
+            or ind > len(self.tag_sent)
+        ):
+            return False
+        self.tag_sent[ind] = (key, self.tag_sent[ind][1])
+        return True
+
+    def set_tag(self, ind: int, tag: str) -> bool:
+        if (
+            not tag
+            or ind < 0
+            or ind > len(self.tag_sent)
+        ):
+            return False
+        self.tag_sent[ind] = (self.tag_sent[ind][0], tag)
+        return True
+
+    def sentence_in(self, sent: str) -> bool:
         """
         """
-        pos_sent = self.resolve_mecab_version_issues(
-            self.nr_to_none(
-                sentence, 
-                self.none_to_nr(
-                    sentence, 
-                    pos_sent
-                )
-            )
+        if self.sent:
+            self.all_sent = self.all_sent + self.sent
+        if self.tag_sent:
+            self.all_tag_sent = self.all_tag_sent.extend(self.tag_sent)
+        self.sent = sent
+        self.tag_sent = get_pos(sent)
+
+        return (
+            self._resolve_mecab_version_issue
+            and self.none_to_num
+            and self.num_to_none
         )
-        return pos_sent
 
 
 class CandidateSentenceParserInterface:
@@ -164,7 +192,7 @@ class CandidateSentenceParser(CandidateSentenceParserInterface):
         super().__init__()
         self.curr_sent: Optional[str] = None
         self.curr_num: Optional[List[Tuple[str, int]]] = None
-        self.sent_tag = CorrectTags()
+        self.curr_tag = Tag()
         self.sent_cand: str = ""
         self.num_cand: List[Tuple[str, int]] = []
 
@@ -178,94 +206,121 @@ class CandidateSentenceParser(CandidateSentenceParserInterface):
         """"""
         return self.num_cand
 
-    def remove(self) -> None:
-        copy = nr_list
-        list_nr_but_no = [
-            '하나','둘','셋','넷','다섯','여섯','여덟','아홉','열',
-            '수십','수백','수천','수만','수억'
+    def _remove(self) -> None:
+        """
+        """
+        dodge = [
+            '하나', '둘', '셋', '넷', '다섯', '여섯', '여덟',
+            '아홉', '열', '수십', '수백', '수천', '수만', '수억'
         ]
-        for ind, each_nr in enumerate(nr_list):
-            if each_nr != ():
-                for exception in list_nr_but_no:
-                    if each_nr[0] == exception:
-                        null_info = (each_nr[0],'')
-                        copy[ind] = null_info
-        return copy
-
-    def find(sentence: str, sentence_pos: List[Tuple[str, str]]) -> bool:
-        """
-        """
-        sentence_pos = correct_tags(sentence, sentence_pos)
-        pos_list = []
-
-        for pos in sentence_pos:
-            if pos[1] != 'NR':
-                null_info=()
-                pos_list.append(null_info)
-            else:
-                pos_list.append(pos)
-
-        pos_list = exceptionNR(pos_list)
-        string_list = []
-        str = ""
-        NR_index_in_sentence = 0
-
-        for ind, a in enumerate(pos_list):
-            b = ()
-            if a != b:
-                if pos_list[ind - 1] != b:
-                    txt_ind = get_txt_ind_impr(sentence, ind)
-                    txt_ind2 = get_txt_ind_impr(sentence, ind-1)
-                    if txt_ind2 == None:
-                        difference = 1
-                    else:   
-                        difference = txt_ind - txt_ind2 
-
-                    if difference != 1:
-                        string_list.append((str, get_txt_ind_impr(sentence, NR_index_in_sentence)))
-                        str = pos_list[ind][0]
-                        NR_index_in_sentence = ind
-                    else:
-                        if str == '':
-                            NR_index_in_sentence = ind
-                        str += a[0]
-                else:
-                    if str == '':
-                        NR_index_in_sentence = ind
-                    str += a[0]
-            else:
-                if str != '':
-                    string_list.append((str, get_txt_ind_impr(sentence, NR_index_in_sentence)))
-                    str = ''
+        for ind, (key, tag) in enumerate(self.curr_tag.tag_sentence):
             if (
-                pos_list[ind] != b 
-                and ind == len(pos_list) - 1
+                tag == "NR"
+                and key in dodge
             ):
-                string_list.append((str, get_txt_ind_impr(sentence, NR_index_in_sentence)))  
-        return string_list 
+                self.curr_tag.tag_sentence[ind] = (key, "Null")
 
-    def parse(self) -> None:
+    def _find(self) -> bool:
+        """
+        """
+        # sentence_pos = correct_tags(sentence, sentence_pos)
+        # pos_list = []
+
+        # for pos in sentence_pos:
+        #     if pos[1] != 'NR':
+        #         null_info=()
+        #         pos_list.append(null_info)
+        #     else:
+        #         pos_list.append(pos)
+
+        self._remove()
+
+        # pos_list = exceptionNR(pos_list)
+        # string_list = []
+        # str = ""
+        # NR_index_in_sentence = 0
+
+        batch: str = ""
+        batch_ind: Optional[int] = None
+        last_tag: Optional[str] = None
+        for ind, (key, tag) in enumerate(self.curr_tag.tag_sentence):
+            # b = ()
+            if (
+                tag == "NR"
+                and ind == (len(self.curr_tag.tag_sentence) - 1)
+            ):
+                batch = batch + key
+                batch_ind = ind if not batch else None
+                self.curr_num.append((batch, get_text_ind(self.curr_sent, batch_ind)))
+                batch = ""
+            elif (
+                not tag == "NR"
+                and batch
+            ):
+                self.curr_num.append((batch, get_text_ind(self.curr_sent, batch_ind)))
+                batch = ""
+            elif (
+                tag == "NR"
+                and ind != 0
+                and last_tag == "NR"
+                and get_text_ind(self.curr_sent, ind) - get_text_ind(self.curr_sent, ind - 1) != 1
+            ):
+                self.curr_num.append((batch, get_text_ind(self.curr_sent, batch_ind)))
+                batch = key
+                batch_ind = ind
+                
+
+
+            # if tag == "NR":
+            #     if self.curr_tag[ind - 1] != ():
+            #         txt_ind = get_text_ind(self.curr_sent, ind)
+            #         txt_ind2 = get_text_ind(self.curr_sent, ind-1)
+            #         if txt_ind2 == None:
+            #             difference = 1
+            #         else:   
+            #             difference = txt_ind - txt_ind2 
+
+            #         if difference != 1:
+            #             self.curr_num.append((str, get_text_ind(self.curr_sent, ind)))
+            #             str = self.curr_tag[ind][0]
+            #         else:
+            #             if str == '':
+            #                 NR_index_in_sentence = ind
+            #             str += key
+            #     else:
+            #         if str == '':
+            #             NR_index_in_sentence = ind
+            #         str += key
+            # else:
+            #     if str != '':
+            #         self.curr_num.append((str, get_text_ind(self.curr_sent, ind)))
+            #         str = ''
+            # if (
+            #     self.curr_tag[ind] != () 
+            #     and ind == len(self.curr_tag) - 1
+            # ):
+            #     self.curr_num.append((str, get_text_ind(self.curr_sent, ind)))  
+        return True
+
+    def _parse(self) -> None:
         """
         """
         if not self.curr_num:
             return
         for num, ind in reversed(self.curr_num):
-            self.curr_sent = "".join(
-                self.curr_sent[:ind], 
-                "[", num, "]",
-                self.curr_sent[ind+len(num):]
-            )
-
-    def push_sentence(self, sentence: str) -> bool:
-        """
-        """
-        self.curr_sent = sentence
-        if not self.find(self.curr_sent, get_pos(self.curr_sent)):
-            return False
-
-        self.parse()
+            self.curr_sent = self.curr_sent[:ind] + "[" + num + "]" + self.curr_sent[ind+len(num):]
         self.cand_sent = self.cand_sent + self.curr_sent
 
+    def push_sentence(self, sent: str) -> bool:
+        """
+        """
+        self.curr_sent = sent
+        if (
+            not self.curr_tag.sentence_in(sent)
+            and not self._find()
+        ):
+            return False
+        self._parse()
         self.curr_sent = None
         self.curr_num = None
         return True
