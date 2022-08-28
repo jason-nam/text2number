@@ -1,6 +1,7 @@
 from typing import Any, List, Optional, Tuple
 
-from .rule_util import get_pos, get_text_ind, get_pos_ind
+# from .rule_util import get_pos, get_text_ind, get_pos_ind
+from rule_util import get_pos, get_text_ind, get_pos_ind
 
 
 class Unit:
@@ -13,14 +14,14 @@ class CorrectTag:
     """
     """
     NR_TO_NULL = [
-        [('범','NNBC'),-1,False,True],[('몇','MM'),1,True,True],
-        [("제","NNBC"),-1,True,True],[("한","MM"),1,True,False],
-        [("쓰리","NR"),1,False,False],[("포","NR"),1,False,False],
-        [("파이브","NR"),1,False,False],[("이런","NR"),0,False,False]
+        [('범', 'NNBC'), -1, False, True], [('몇', 'MM'), 1, True, True],
+        [("제", "NNBC"), -1, True, True], [("한", "MM"), 1, True, False],
+        [("쓰리", "NR"), 1, False, False], [("포", "NR"), 1, False, False],
+        [("파이브", "NR"), 1, False, False], [("이런", "NR"), 0, False, False]
     ]
     NULL_TO_NR = [
-        [("쪽","NNB"),-1,False, True],[('인','VCP+ETM'),-1,False,True],
-        [("당","XSN"),-1,False,False],[("천","NR"),-1,True,False]
+        [("쪽", "NNB"), -1, False, True], [('인', 'VCP+ETM'), -1, False, True],
+        [("당", "XSN"), -1, False, False], [("천", "NR"), -1, True, False]
     ]
 
 
@@ -39,7 +40,7 @@ class Tag(Unit, CorrectTag):
     def tag_sentence(self) -> List[Tuple[str, str]]:
         return self.tag_sent
 
-    def _is_separated(self, tag_ind: int, dir: int) -> bool:
+    def is_separated(self, tag_ind: int, dir: int) -> bool:
         """
         """
         if not self.sent:
@@ -47,10 +48,10 @@ class Tag(Unit, CorrectTag):
         text_ind = get_text_ind(self.sent, tag_ind)
         target_ind = get_text_ind(self.sent, tag_ind + dir)
         return not (
-            (text_ind - target_ind) == -1 
+            (text_ind - target_ind) == -1
             or (text_ind - target_ind) == 1)
-    
-    def _resolve_mecab_version_issue(self) -> bool:
+
+    def resolve_mecab_version_issue(self) -> bool:
         """
         """
         if not self.tag_sent:
@@ -58,72 +59,80 @@ class Tag(Unit, CorrectTag):
         for ind, (key, tag) in enumerate(self.tag_sent[1:-1], start=1):
             if not tag == "NR":
                 continue
-            else:
-                if all(
-                    front_back_pos_element in ["NNG", "NNP"] 
-                    for front_back_pos_element in [self.tag_sent[ind-1][1], self.tag_sent[ind+1][1]]
-                ):
-                    self.tag_sent[ind] = (key, "Null")
+            if all(
+                fb_tag in ["NNG", "NNP"]
+                for fb_tag in [self.tag_sent[ind-1][1], self.tag_sent[ind+1][1]]
+            ):
+                self.tag_sent[ind] = (key, "Null")
         return True
 
-    def num_to_none(self):
+    def num_to_none(self) -> bool:
         """
         """
-        for ind,element in enumerate(self.NR_TO_NULL):
-            for ind,pos in enumerate(self.pos_sent):
-                if pos != () and pos == element[0]:
-                    if self.pos_sent[ind+element[-3]]!= () and self.pos_sent[ind+element[-3]][1] =='NR':
-                        if element[-2] and not self.is_separated(self.sent, self.pos_sent, ind, element[-3]):
+        for ind, pos in enumerate(self.tag_sent):
+            for ind, element in enumerate(self.NR_TO_NULL):
+                if pos != element[0]:
+                    continue
+                if (
+                    self.tag_sent[ind + element[-3]] != ()
+                    and self.tag_sent[ind + element[-3]][1] == "NR"
+                    and element[-2]
+                    and not self.is_separated(ind, element[-3])
+                ):
+                    #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
+                    self.tag_sent[ind + element[-3]] = (self.tag_sent[ind + element[-3]][0], 'Null')
+                    if element[-1]:
+                        at_where = ind + element[-3] * 2
+                        while self.tag_sent[at_where][1] == "NR":
                             #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                            self.pos_sent[ind+element[-3]] = (self.pos_sent[ind+element[-3]][0], 'Null')
-                            if element[-1]:
-                                at_where = ind+element[-3]*2
-                                while self.pos_sent[at_where][1] =='NR':
-                                    #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                                    self.pos_sent[at_where] = (self.pos_sent[at_where][0],'Null')
-                        elif not element[-2]:
+                            self.tag_sent[at_where] = (self.tag_sent[at_where][0], "Null")
+                elif (
+                    self.tag_sent[ind + element[-3]] != ()
+                    and self.tag_sent[ind + element[-3]][1] == "NR"
+                    and not element[-2]
+                ):
+                    #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
+                    self.tag_sent[ind + element[-3]] = (self.tag_sent[ind + element[-3]][0], "Null")
+                    if element[-1]:
+                        at_where = ind + element[-3] * 2
+                        while self.tag_sent[at_where][1] == "NR":
                             #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                            self.pos_sent[ind+element[-3]] = (self.pos_sent[ind+element[-3]][0], 'Null')
-                            if element[-1]:
-                                at_where = ind+element[-3]*2
-                                while self.pos_sent[at_where][1] =='NR':
-                                    #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                                    self.pos_sent[at_where] = (self.pos_sent[at_where][0],'Null')
-        return self.pos_sent                
-                
-    def none_to_num(self, sentence,sentence_pos):
+                            self.tag_sent[at_where] = (self.tag_sent[at_where][0], "Null")
+        return True
+
+    def none_to_num(self) -> bool:
         """
         """
         for ind, element in enumerate(self.NULL_TO_NR):
             for ind, pos in enumerate(sentence_pos):
                 if (
-                    pos != () 
+                    pos != ()
                     and pos == element[0]
                 ):
                     if (
-                        sentence_pos[ind + element[-3]] != () 
-                        and sentence_pos[ind + element[-3]][0][0] in self.UNITS
+                        self.tag_sent[ind + element[-3]] != ()
+                        and self.tag_sent[ind + element[-3]][0][0] in self.UNITS
                     ):
                         if (
-                            element[-2] 
-                            and not self.is_separated(sentence, sentence_pos, ind, element[-3])
+                            element[-2]
+                            and not self.is_separated(ind, element[-3])
                         ):
                             #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                            sentence_pos[ind + element[-3]] = (sentence_pos[ind + element[-3]][0], 'NR')
+                            self.tag_sent[ind + element[-3]] = (self.tag_sent[ind + element[-3]][0], 'NR')
                             if element[-1]:
                                 at_where = ind + element[-3] * 2
-                                while sentence_pos[at_where][0] in self.UNITS:
+                                while self.tag_sent[at_where][0] in self.UNITS:
                                     #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                                    sentence_pos[at_where] = (sentence_pos[at_where][0], 'NR')
+                                    self.tag_sent[at_where] = (self.tag_sent[at_where][0], 'NR')
                         elif not element[-2]:
                             #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                            sentence_pos[ind + element[-3]] = (sentence_pos[ind + element[-3]][0], 'NR')
+                            self.tag_sent[ind + element[-3]] = (self.tag_sent[ind + element[-3]][0], 'NR')
                             if element[-1]:
                                 at_where = ind + element[-3] * 2
-                                while sentence_pos[at_where][0] in self.UNITS:
+                                while self.tag_sent[at_where][0] in self.UNITS:
                                     #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                                    sentence_pos[at_where] = (sentence_pos[at_where][0], 'NR')
-        return sentence_pos   
+                                    self.tag_sent[at_where] = (self.tag_sent[at_where][0], 'NR')
+        return True
 
     def set_key(self, ind: int, key: str) -> bool:
         if (
@@ -145,18 +154,21 @@ class Tag(Unit, CorrectTag):
         self.tag_sent[ind] = (self.tag_sent[ind][0], tag)
         return True
 
+    def is_empty(self) -> bool:
+        return not self.tag_sent
+
     def sentence_in(self, sent: str) -> bool:
         """
         """
         if self.sent:
             self.all_sent = self.all_sent + self.sent
         if self.tag_sent:
-            self.all_tag_sent = self.all_tag_sent.extend(self.tag_sent)
+            self.all_tag_sent.extend(self.tag_sent)
         self.sent = sent
         self.tag_sent = get_pos(sent)
 
         return (
-            self._resolve_mecab_version_issue
+            self.resolve_mecab_version_issue
             and self.none_to_num
             and self.num_to_none
         )
@@ -191,7 +203,7 @@ class CandidateSentenceParser(CandidateSentenceParserInterface):
         """"""
         super().__init__()
         self.curr_sent: Optional[str] = None
-        self.curr_num: Optional[List[Tuple[str, int]]] = None
+        self.curr_num: List[Tuple[str, int]] = []
         self.curr_tag = Tag()
         self.sent_cand: str = ""
         self.num_cand: List[Tuple[str, int]] = []
@@ -206,7 +218,7 @@ class CandidateSentenceParser(CandidateSentenceParserInterface):
         """"""
         return self.num_cand
 
-    def _remove(self) -> None:
+    def remove(self) -> None:
         """
         """
         dodge = [
@@ -218,98 +230,58 @@ class CandidateSentenceParser(CandidateSentenceParserInterface):
                 tag == "NR"
                 and key in dodge
             ):
-                self.curr_tag.tag_sentence[ind] = (key, "Null")
+                self.curr_tag.set_tag(ind, "Null")
 
-    def _find(self) -> bool:
+    def find(self) -> bool:
         """
         """
-        # sentence_pos = correct_tags(sentence, sentence_pos)
-        # pos_list = []
-
-        # for pos in sentence_pos:
-        #     if pos[1] != 'NR':
-        #         null_info=()
-        #         pos_list.append(null_info)
-        #     else:
-        #         pos_list.append(pos)
-
-        self._remove()
-
-        # pos_list = exceptionNR(pos_list)
-        # string_list = []
-        # str = ""
-        # NR_index_in_sentence = 0
-
+        self.remove()
         batch: str = ""
         batch_ind: Optional[int] = None
         last_tag: Optional[str] = None
         for ind, (key, tag) in enumerate(self.curr_tag.tag_sentence):
-            # b = ()
+            if (
+                tag == "NR"
+                and last_tag == "NR"
+            ):
+                if (get_text_ind(self.curr_sent, ind) - get_text_ind(self.curr_sent, ind - 1) == 1):
+                    batch = batch + key
+                else:
+                    self.curr_num.append((batch, get_text_ind(self.curr_sent, batch_ind)))
+                    batch = key
+                    batch_ind = ind
+            elif (
+                tag == "NR"
+                and last_tag != "NR"
+            ):
+                batch = key
+                batch_ind = ind
+            elif (
+                tag != "NR"
+                and last_tag == "NR"
+            ):
+                self.curr_num.append((batch, get_text_ind(self.curr_sent, batch_ind)))
+                batch = ""
+            elif (
+                tag != "NR"
+                and last_tag != "NR"
+            ):
+                continue
             if (
                 tag == "NR"
                 and ind == (len(self.curr_tag.tag_sentence) - 1)
             ):
-                batch = batch + key
-                batch_ind = ind if not batch else None
                 self.curr_num.append((batch, get_text_ind(self.curr_sent, batch_ind)))
-                batch = ""
-            elif (
-                not tag == "NR"
-                and batch
-            ):
-                self.curr_num.append((batch, get_text_ind(self.curr_sent, batch_ind)))
-                batch = ""
-            elif (
-                tag == "NR"
-                and ind != 0
-                and last_tag == "NR"
-                and get_text_ind(self.curr_sent, ind) - get_text_ind(self.curr_sent, ind - 1) != 1
-            ):
-                self.curr_num.append((batch, get_text_ind(self.curr_sent, batch_ind)))
-                batch = key
-                batch_ind = ind
-                
-
-
-            # if tag == "NR":
-            #     if self.curr_tag[ind - 1] != ():
-            #         txt_ind = get_text_ind(self.curr_sent, ind)
-            #         txt_ind2 = get_text_ind(self.curr_sent, ind-1)
-            #         if txt_ind2 == None:
-            #             difference = 1
-            #         else:   
-            #             difference = txt_ind - txt_ind2 
-
-            #         if difference != 1:
-            #             self.curr_num.append((str, get_text_ind(self.curr_sent, ind)))
-            #             str = self.curr_tag[ind][0]
-            #         else:
-            #             if str == '':
-            #                 NR_index_in_sentence = ind
-            #             str += key
-            #     else:
-            #         if str == '':
-            #             NR_index_in_sentence = ind
-            #         str += key
-            # else:
-            #     if str != '':
-            #         self.curr_num.append((str, get_text_ind(self.curr_sent, ind)))
-            #         str = ''
-            # if (
-            #     self.curr_tag[ind] != () 
-            #     and ind == len(self.curr_tag) - 1
-            # ):
-            #     self.curr_num.append((str, get_text_ind(self.curr_sent, ind)))  
+            last_tag = tag
         return True
 
-    def _parse(self) -> None:
+    def parse(self) -> None:
         """
         """
-        if not self.curr_num:
-            return
         for num, ind in reversed(self.curr_num):
             self.curr_sent = self.curr_sent[:ind] + "[" + num + "]" + self.curr_sent[ind+len(num):]
-        self.cand_sent = self.cand_sent + self.curr_sent
+            self.num_cand.append((num, ind + len(self.sent_cand)))
+        self.sent_cand = self.sent_cand + self.curr_sent
 
     def push_sentence(self, sent: str) -> bool:
         """
@@ -317,18 +289,21 @@ class CandidateSentenceParser(CandidateSentenceParserInterface):
         self.curr_sent = sent
         if (
             not self.curr_tag.sentence_in(sent)
-            and not self._find()
+            and not self.find()
         ):
             return False
-        self._parse()
+        self.find()
+        self.parse()
+        print(self.curr_sent)
+        print(self.curr_num)
         self.curr_sent = None
-        self.curr_num = None
+        self.curr_num = []
         return True
 
 
 if __name__ == "__main__":
     sent_parser = CandidateSentenceParser()
-    
-    sent_parser.push_sentence("")
+
+    print(sent_parser.push_sentence("내 나이는 오십이야. 너는 누구니?"))
     print(sent_parser.sent_cand)
     print(sent_parser.number_candidate)
