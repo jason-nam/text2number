@@ -1,31 +1,37 @@
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Dict
+import re
 
-# from .rule_util import get_pos, get_text_ind, get_pos_ind
-from rule_util import get_pos, get_text_ind, get_pos_ind
-
+from .rule_util import get_pos, get_text_ind, get_pos_ind
 
 class Unit:
     """
     """
-    UNITS = ["일", "이", "삼", "사", "오", "육", "칠", "팔", "구"]
+    UNITS: List[str] = ["일", "이", "삼", "사", "오", "육", "칠", "팔", "구"]
 
 
-class CorrectTag:
+class TagCorrectionInfo:
     """
     """
-    NR_TO_NULL = [
-        [('범', 'NNBC'), -1, False, True], [('몇', 'MM'), 1, True, True],
-        [("제", "NNBC"), -1, True, True], [("한", "MM"), 1, True, False],
-        [("쓰리", "NR"), 1, False, False], [("포", "NR"), 1, False, False],
-        [("파이브", "NR"), 1, False, False], [("이런", "NR"), 0, False, False]
+    NR_TO_NULL: List[Dict[str, Any]] = [
+        {"tag": ('범', 'NNBC'), "dir": -1, "remove_space": False, "continue_nr_check": True},
+        {"tag": ('몇', 'MM'), "dir": 1, "remove_space": True, "continue_nr_check": True},
+        {"tag": ('제', 'NNBC'), "dir": -1, "remove_space": True, "continue_nr_check": True},
+        {"tag": ('한', 'MM'), "dir": 1, "remove_space": True, "continue_nr_check": False},
+        {"tag": ('쓰리', 'NR'), "dir": 1, "remove_space": False, "continue_nr_check": False},
+        {"tag": ('포', 'NR'), "dir": 1, "remove_space": False, "continue_nr_check": False},
+        {"tag": ('파이브', 'NR'), "dir": 1, "remove_space": False, "continue_nr_check": False},
+        {"tag": ('이런', 'NR'), "dir": 0, "remove_space": False, "continue_nr_check": False},
     ]
-    NULL_TO_NR = [
-        [("쪽", "NNB"), -1, False, True], [('인', 'VCP+ETM'), -1, False, True],
-        [("당", "XSN"), -1, False, False], [("천", "NR"), -1, True, False]
+
+    NULL_TO_NR: List[Dict[str, Any]] = [
+        {"tag": ('쪽', 'NNB'), "dir": -1, "remove_space": False, "continue_nr_check": True},
+        {"tag": ('인', 'VCP+ETM'), "dir": -1, "remove_space": False, "continue_nr_check": True},
+        {"tag": ('당', 'XSN'), "dir": -1, "remove_space": False, "continue_nr_check": False},
+        {"tag": ('천', 'NR'), "dir": -1, "remove_space": True, "continue_nr_check": False},
     ]
 
 
-class Tag(Unit, CorrectTag):
+class Tag(Unit, TagCorrectionInfo):
     """
     """
 
@@ -69,69 +75,61 @@ class Tag(Unit, CorrectTag):
     def num_to_none(self) -> bool:
         """
         """
-        for ind, pos in enumerate(self.tag_sent):
-            for ind, element in enumerate(self.NR_TO_NULL):
-                if pos != element[0]:
+        for ind, (key, tag) in enumerate(self.tag_sent):
+            for ind, item in enumerate(self.NR_TO_NULL):
+                if (key, tag) != item["tag"]:
                     continue
                 if (
-                    self.tag_sent[ind + element[-3]] != ()
-                    and self.tag_sent[ind + element[-3]][1] == "NR"
-                    and element[-2]
-                    and not self.is_separated(ind, element[-3])
+                    ind + item["dir"] < len(self.tag_sent)
+                    and self.tag_sent[ind + item["dir"]][1] == "NR"
+                    and item["remove_space"]
+                    and not self.is_separated(ind, item["dir"])
                 ):
-                    #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                    self.tag_sent[ind + element[-3]] = (self.tag_sent[ind + element[-3]][0], 'Null')
-                    if element[-1]:
-                        at_where = ind + element[-3] * 2
+                    self.tag_sent[ind + item["dir"]] = (self.tag_sent[ind + item["dir"]][0], 'Null')
+                    if item["continue_nr_check"]:
+                        at_where = ind + item["dir"] * 2
                         while self.tag_sent[at_where][1] == "NR":
-                            #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
                             self.tag_sent[at_where] = (self.tag_sent[at_where][0], "Null")
                 elif (
-                    self.tag_sent[ind + element[-3]] != ()
-                    and self.tag_sent[ind + element[-3]][1] == "NR"
-                    and not element[-2]
+                    ind + item["dir"] < len(self.tag_sent)
+                    and self.tag_sent[ind + item["dir"]][1] == "NR"
+                    and not item["remove_space"]
                 ):
-                    #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                    self.tag_sent[ind + element[-3]] = (self.tag_sent[ind + element[-3]][0], "Null")
-                    if element[-1]:
-                        at_where = ind + element[-3] * 2
+                    self.tag_sent[ind + item["dir"]] = (self.tag_sent[ind + item["dir"]][0], "Null")
+                    if item["continue_nr_check"]:
+                        at_where = ind + item["dir"] * 2
                         while self.tag_sent[at_where][1] == "NR":
-                            #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
                             self.tag_sent[at_where] = (self.tag_sent[at_where][0], "Null")
         return True
 
     def none_to_num(self) -> bool:
         """
         """
-        for ind, element in enumerate(self.NULL_TO_NR):
-            for ind, pos in enumerate(sentence_pos):
+        for ind, (key, tag) in enumerate(self.tag_sent):
+            for ind, item in enumerate(self.NULL_TO_NR):
+                if (key, tag) != item["tag"]:
+                    continue
                 if (
-                    pos != ()
-                    and pos == element[0]
+                    ind + item["dir"] < len(self.tag_sent)
+                    and self.tag_sent[ind + item["dir"]][0] in self.UNITS
+                    and item["remove_space"]
+                    and not self.is_separated(ind, item["dir"])
                 ):
-                    if (
-                        self.tag_sent[ind + element[-3]] != ()
-                        and self.tag_sent[ind + element[-3]][0][0] in self.UNITS
-                    ):
-                        if (
-                            element[-2]
-                            and not self.is_separated(ind, element[-3])
-                        ):
-                            #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                            self.tag_sent[ind + element[-3]] = (self.tag_sent[ind + element[-3]][0], 'NR')
-                            if element[-1]:
-                                at_where = ind + element[-3] * 2
-                                while self.tag_sent[at_where][0] in self.UNITS:
-                                    #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                                    self.tag_sent[at_where] = (self.tag_sent[at_where][0], 'NR')
-                        elif not element[-2]:
-                            #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                            self.tag_sent[ind + element[-3]] = (self.tag_sent[ind + element[-3]][0], 'NR')
-                            if element[-1]:
-                                at_where = ind + element[-3] * 2
-                                while self.tag_sent[at_where][0] in self.UNITS:
-                                    #특정 숫자들만 바꿔야 할 경우 여기다가 추가하면 됨
-                                    self.tag_sent[at_where] = (self.tag_sent[at_where][0], 'NR')
+                    self.tag_sent[ind + item["dir"]] = (self.tag_sent[ind + item["dir"]][0], 'NR')
+                    if item["continue_nr_check"]:
+                        at_where = ind + item["dir"] * 2
+                        while self.tag_sent[at_where][0] in self.UNITS:
+                            self.tag_sent[at_where] = (self.tag_sent[at_where][0], 'NR')
+                elif (
+                    ind + item["dir"] < len(self.tag_sent)
+                    and self.tag_sent[ind + item["dir"]][0] in self.UNITS
+                    and not item["remove_space"]
+                ):
+                    self.tag_sent[ind + item["dir"]] = (self.tag_sent[ind + item["dir"]][0], 'NR')
+                    if item["continue_nr_check"]:
+                        at_where = ind + item["dir"] * 2
+                        while self.tag_sent[at_where][0] in self.UNITS:
+                            self.tag_sent[at_where] = (self.tag_sent[at_where][0], 'NR')
         return True
 
     def set_key(self, ind: int, key: str) -> bool:
@@ -166,42 +164,19 @@ class Tag(Unit, CorrectTag):
             self.all_tag_sent.extend(self.tag_sent)
         self.sent = sent
         self.tag_sent = get_pos(sent)
-
         return (
-            self.resolve_mecab_version_issue
-            and self.none_to_num
-            and self.num_to_none
+            self.resolve_mecab_version_issue()
+            and self.none_to_num()
+            and self.num_to_none()
         )
 
 
-class CandidateSentenceParserInterface:
-    """Interface for 'CandidateSentenceParser'"""
-
-    def __init__(self) -> None:
-        """Initialize parser."""
-
-    def push_sentence(self, sentence: str) -> bool:
-        """Push next sentence."""
-        return NotImplemented
-
-    @property
-    def sentence_candidate(self) -> str:
-        """Get value of current candidate sentence."""
-        return NotImplemented
-
-    @property
-    def number_candidate(self) -> List[Tuple[str, int]]:
-        """Get list values of identified number candidates."""
-        return NotImplemented
-
-
-class CandidateSentenceParser(CandidateSentenceParserInterface):
+class CandidateSentenceParser:
     """
     """
 
     def __init__(self) -> None:
         """"""
-        super().__init__()
         self.curr_sent: Optional[str] = None
         self.curr_num: List[Tuple[str, int]] = []
         self.curr_tag = Tag()
@@ -244,7 +219,7 @@ class CandidateSentenceParser(CandidateSentenceParserInterface):
                 tag == "NR"
                 and last_tag == "NR"
             ):
-                if (get_text_ind(self.curr_sent, ind) - get_text_ind(self.curr_sent, ind - 1) == 1):
+                if (get_text_ind(self.curr_sent, ind) - get_text_ind(self.curr_sent, ind - 1) == len(self.curr_tag.tag_sentence[ind - 1][0])):
                     batch = batch + key
                 else:
                     self.curr_num.append((batch, get_text_ind(self.curr_sent, batch_ind)))
@@ -280,7 +255,7 @@ class CandidateSentenceParser(CandidateSentenceParserInterface):
         """
         for num, ind in reversed(self.curr_num):
             self.curr_sent = self.curr_sent[:ind] + "[" + num + "]" + self.curr_sent[ind+len(num):]
-            self.num_cand.append((num, ind + len(self.sent_cand)))
+            self.num_cand.insert(0, (num, ind + len(re.sub("[\[\]]", "", self.sent_cand))))
         self.sent_cand = self.sent_cand + self.curr_sent
 
     def push_sentence(self, sent: str) -> bool:
@@ -294,8 +269,6 @@ class CandidateSentenceParser(CandidateSentenceParserInterface):
             return False
         self.find()
         self.parse()
-        print(self.curr_sent)
-        print(self.curr_num)
         self.curr_sent = None
         self.curr_num = []
         return True

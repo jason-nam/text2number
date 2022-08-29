@@ -1,2 +1,4 @@
-def deep_candidate():
+from typing import Tuple, List
+
+def deep_candidate(sent: str) -> Tuple[str, List[Tuple[str, int]]]:
     return
