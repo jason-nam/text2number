@@ -8,9 +8,11 @@ import torch
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from torch.optim import Adam
 
+_dir = os.path.dirname(os.path.abspath(__file__))
+
 # from data_loader import load_word_matrix
-from utils import set_seed, load_vocab, compute_metrics, show_report, get_labels, get_test_texts
-from model import BiLSTM_CNN_CRF
+from .utils import set_seed, load_vocab, compute_metrics, show_report, get_labels, get_test_texts
+from .model import BiLSTM_CNN_CRF
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +120,7 @@ class Trainer(object):
         preds = None
         out_label_ids = None
 
-        for batch in tqdm(eval_dataloader, desc="Evaluating"):
+        for batch in tqdm(eval_dataloader, desc="Evaluating", disable=True):
             self.model.eval()
             batch = tuple(t.to(self.device) for t in batch)
             with torch.no_grad():
@@ -166,11 +168,11 @@ class Trainer(object):
             if not os.path.exists(self.args.pred_dir):
                 os.mkdir(self.args.pred_dir)
 
-            with open(os.path.join(self.args.pred_dir, "pred_{}.txt".format(step)), "w", encoding="utf-8") as f:
-                for text, true_label, pred_label in zip(self.test_texts, out_label_list, preds_list):
-                    for t, tl, pl in zip(text, true_label, pred_label):
-                        f.write("{} {} {}\n".format(t, tl, pl))
-                    f.write("\n")
+            # with open(os.path.join(self.args.pred_dir, "pred_{}.txt".format(step)), "w", encoding="utf-8") as f:
+            #     for text, true_label, pred_label in zip(self.test_texts, out_label_list, preds_list):
+            #         for t, tl, pl in zip(text, true_label, pred_label):
+            #         #     f.write("{} {} {}\n".format(t, tl, pl))
+            #         # f.write("\n")
 
         result = compute_metrics(out_label_list, preds_list)
         results.update(result)
@@ -195,14 +197,14 @@ class Trainer(object):
 
     def load_model(self):
         # Check whether model exists
-        if not os.path.exists(self.args.model_dir):
+        if not os.path.exists(os.path.join(_dir, self.args.model_dir)):
             raise Exception("Model doesn't exists! Train first!")
 
         try:
             # self.bert_config = self.config_class.from_pretrained(self.args.model_dir)
-            self.args = torch.load(os.path.join(self.args.model_dir, 'args.pt'))
+            self.args = torch.load(os.path.join(_dir, self.args.model_dir, 'args.pt'))
             logger.info("***** Args loaded *****")
-            self.model.load_state_dict(torch.load(os.path.join(self.args.model_dir, 'model.pt')))
+            self.model.load_state_dict(torch.load(os.path.join(_dir, self.args.model_dir, 'model.pt')))
             self.model.to(self.device)
             logger.info("***** Model Loaded *****")
         except:

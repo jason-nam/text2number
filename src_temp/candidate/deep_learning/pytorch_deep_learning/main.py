@@ -1,24 +1,28 @@
 import argparse
+import logging
+import warnings
 
-from trainer import Trainer
-from utils import init_logger
-from data_loader import load_examples
+from .trainer import Trainer
+from .utils import init_logger
+from .data_loader import load_examples
 
+def main(args, sent):
+    logging.disable(logging.CRITICAL)
+    warnings.filterwarnings("ignore")
 
-def main(args):
     init_logger()
     # if not args.no_w2v:
     #     download_w2v(args)
+
 
     # train_dataset = load_examples(args, mode="train")
     train_dataset = None
     dev_dataset = None
     # test_dataset = load_examples(args, mode="test")
     test_dataset = None
-    infer_dataset = load_examples(args, mode="infer")
+    infer_dataset = load_examples(args, sent, mode="infer")
 
     trainer = Trainer(args, train_dataset, dev_dataset, test_dataset, infer_dataset)
-    
 
     if args.do_train:
         trainer.train()
@@ -29,9 +33,10 @@ def main(args):
 
     if args.do_infer:
         trainer.load_model()
-        print(trainer.evaluate("infer","eval"))
+        return trainer.evaluate("infer", "eval")
 
 if __name__ == '__main__':
+    sent = "삼백육십오일 동안 무엇을 했는가"
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--data_dir", default="./data", type=str, help="The input data dir")
@@ -81,4 +86,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    main(args)
+    main(args, sent)

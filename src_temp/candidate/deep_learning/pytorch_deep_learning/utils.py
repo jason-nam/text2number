@@ -9,6 +9,8 @@ import torch
 import numpy as np
 from seqeval.metrics import precision_score, recall_score, f1_score, classification_report
 
+_dir = os.path.dirname(os.path.abspath(__file__))
+
 logger = logging.getLogger(__name__)
 
 
@@ -25,7 +27,7 @@ def get_test_texts(args):
 
 
 def load_vocab(args):
-    with open("vocab/vocab.json","r",encoding = "UTF-8-sig") as f:
+    with open(os.path.join(_dir, "vocab/vocab.json"),"r",encoding = "UTF-8-sig") as f:
         word_vocab = json.load(f)
         # char_vocab = json.load(f)
         char_vocab = word_vocab
@@ -48,7 +50,7 @@ def load_vocab(args):
 
 
 def get_labels(args):
-    return [label.strip() for label in open(os.path.join(args.data_dir, args.label_file), 'r', encoding='utf-8')]
+    return [label.strip() for label in open(os.path.join(_dir, args.data_dir, args.label_file), 'r', encoding='utf-8')]
 
 
 def load_label_vocab(args):

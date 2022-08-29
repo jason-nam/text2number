@@ -8,7 +8,7 @@ import numpy as np
 import torch
 from torch.utils.data import TensorDataset
 
-from utils import get_labels, load_vocab, load_label_vocab, get_infer_dataset
+from .utils import get_labels, load_vocab, load_label_vocab, get_infer_dataset
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ class NaverNerProcessor(object):
             examples.append(InputExample(guid=guid, words=words, labels=labels))
         return examples
 
-    def get_examples(self, mode):
+    def get_examples(self, mode, sent):
         """
         Args:
             mode: train, dev, test
@@ -109,7 +109,9 @@ class NaverNerProcessor(object):
             file_to_read = self.args.test_file
         elif mode == "infer":
             file_to_read = self.args.infer_file
-            return self._create_examples(get_infer_dataset(self._read_file(os.path.join(self.args.data_dir, file_to_read))), mode)
+            # return self._create_examples(get_infer_dataset(self._read_file(os.path.join(self.args.data_dir, file_to_read))), mode)
+            # print([sent.strip()])
+            return self._create_examples(get_infer_dataset([sent.strip()]), mode)
             
         logger.info("LOOKING AT {}".format(os.path.join(self.args.data_dir, file_to_read)))
         return self._create_examples((self._read_file(os.path.join(self.args.data_dir, file_to_read))), mode)
@@ -221,7 +223,7 @@ def convert_examples_to_features(examples,
     return features
 
 
-def load_examples(args, mode):
+def load_examples(args, sent, mode):
     processor = NaverNerProcessor(args)
 
     # Load data features from dataset file
@@ -233,7 +235,7 @@ def load_examples(args, mode):
     elif mode == "test":
         examples = processor.get_examples("test")
     elif mode == "infer":
-        examples = processor.get_examples("infer")
+        examples = processor.get_examples("infer", sent)
     else:
         raise Exception("For mode, Only train, dev, test is available")
 
