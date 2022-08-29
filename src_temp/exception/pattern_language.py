@@ -3,6 +3,10 @@ from typing import Dict, List
 from function import *
 # from convert import digit_to_txt, txt_to_digit
 
+NUM_REGEX = [
+    ""
+]
+
 TIME_REGEX = [
     # day, month, year
     "(?:^|\s)([영일이삼사오육칠팔구십백천만억]{1,})\s{0,}년",
@@ -61,11 +65,7 @@ def convert_regular_expression(sentence: str) -> str:
             relaxed = False
         re_iter = re.finditer(regex_num, sentence)
         for s in re_iter:
-            # print(sentence)
-            # print(s.group(1))
             for i in reversed(range(1, len(s.groups())+1)):
-                # print(s.group(i))
-                # print(s.span(i))
                 start = s.span(i)[0]
                 end = s.span(i)[1]
                 sentence = (
@@ -79,11 +79,7 @@ def revert_regular_expression(sentence: str) -> str:
     for regex_num in REVERT_REGEX:
         re_iter = re.finditer(regex_num, sentence)
         for s in re_iter:
-            # print(sentence)
-            # print(s.group(1))
             for i in reversed(range(1, len(s.groups())+1)):
-                # print(s.group(i))
-                # print(s.span(i))
                 start = s.span(i)[0]
                 end = s.span(i)[1]
                 sentence = (
@@ -97,11 +93,7 @@ def convert_text_regular_expression(sentence: str) -> str:
     for regex_text in CONVERT_TEXT_REGEX:
         re_iter_text = re.finditer(regex_text, sentence)
         for s in re_iter_text:
-            # print(sentence)
-            # print(s.group(1))
             for i in reversed(range(1, len(s.groups())+1)):
-                # print(s.group(i))
-                # print(s.span(i))
                 start = s.span(i)[0]
                 end = s.span(i)[1]
                 sentence = (

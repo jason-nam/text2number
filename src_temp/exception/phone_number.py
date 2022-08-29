@@ -4,17 +4,8 @@ from util import *
 CALLING_CODES = ["공일공", "공일일", "공이"]
 NUMBER_KOREAN = ["공","일","이","삼","사","오","육","칠","팔","구","영","하나","둘","셋","넷","다섯","여섯","일곱","여덟","아홉"]
 SPEACIAL_LETTER = ["다시","-","에"]
-'''
-def phone_number_exception(sentence: str, sentence_pos: list) -> str:
-    for calling_code in CALLING_CODES:
-        if calling_code not in sentence:
-            continue
-        calling_code_start_indices = [i for i in range(len(sentence)) if sentence.startswith(calling_code, i)]
-        for calling_code_start_index in calling_code_start_indices:
-            
-            sentence = sentence[:calling_code_start_index] + txt_to_digit(sentence[calling_code_start_index:calling_code_start_index+len(calling_code)+10]) + sentence[calling_code_start_index+len(calling_code)+10:]
-    return sentence
-'''
+
+
 def PhoneNumberToDigit(sentence):
     began = False
     number_count = 0

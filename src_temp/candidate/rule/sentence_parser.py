@@ -1,7 +1,17 @@
 from typing import Any, List, Optional, Tuple, Dict
-import re
+import re, os, json
 
 from .rule_util import get_pos, get_text_ind, get_pos_ind
+
+_dir = os.path.dirname(os.path.abspath(__file__))
+prefix_suffix_path = os.path.join(_dir, "./prefix_suffix")
+
+with open(os.path.join(prefix_suffix_path, "prefix.json"), "r", encoding="utf-8") as file:
+    prefix = json.load(file)
+
+with open(os.path.join(prefix_suffix_path, "suffix.json"), "r", encoding="utf-8") as file:
+    suffix = json.load(file)
+
 
 class Unit:
     """
@@ -167,8 +177,7 @@ class Tag(Unit, TagCorrectionInfo):
         return (
             self.resolve_mecab_version_issue()
             and self.none_to_num()
-            and self.num_to_none()
-        )
+            and self.num_to_none())
 
 
 class CandidateSentenceParser:
@@ -177,6 +186,7 @@ class CandidateSentenceParser:
 
     def __init__(self) -> None:
         """"""
+        self.sent: str = ""
         self.curr_sent: Optional[str] = None
         self.curr_num: List[Tuple[str, int]] = []
         self.curr_tag = Tag()
@@ -193,24 +203,32 @@ class CandidateSentenceParser:
         """"""
         return self.num_cand
 
-    def remove(self) -> None:
+    def remove_tag(self) -> None:
         """
         """
-        dodge = [
+        bad_key = [
             '하나', '둘', '셋', '넷', '다섯', '여섯', '여덟',
             '아홉', '열', '수십', '수백', '수천', '수만', '수억'
         ]
         for ind, (key, tag) in enumerate(self.curr_tag.tag_sentence):
             if (
                 tag == "NR"
-                and key in dodge
+                and key in bad_key
             ):
                 self.curr_tag.set_tag(ind, "Null")
+
+    def remove_num(self) -> None:
+        """
+        """
+        bad_num = ["삼삼오오", "열사"]
+        for num, _ in self.curr_num:
+            if num in bad_num:
+                self.curr_num.remove(num)
 
     def find(self) -> bool:
         """
         """
-        self.remove()
+        self.remove_tag()
         batch: str = ""
         batch_ind: Optional[int] = None
         last_tag: Optional[str] = None
@@ -250,17 +268,34 @@ class CandidateSentenceParser:
             last_tag = tag
         return True
 
+    def filter_prefix_suffix(self) -> None:
+        filtered_num = list()
+        for num, ind in self.curr_num:
+            remove_num = True
+            for p in prefix:
+                if self.curr_sent[:ind].strip().endswith(p):
+                    remove_num = False
+            for s in suffix:
+                if self.curr_sent[ind + len(num):].strip().startswith(s):
+                    remove_num = False
+            if not remove_num:
+                filtered_num.append((num, ind))
+        self.curr_num = filtered_num
+
     def parse(self) -> None:
         """
         """
+        rev_curr_num = list()
         for num, ind in reversed(self.curr_num):
-            self.curr_sent = self.curr_sent[:ind] + "[" + num + "]" + self.curr_sent[ind+len(num):]
-            self.num_cand.insert(0, (num, ind + len(re.sub("[\[\]]", "", self.sent_cand))))
+            self.curr_sent = self.curr_sent[:ind] + "[" + num + "]" + self.curr_sent[ind + len(num):]
+            rev_curr_num.append((num, ind + len(re.sub("[\[\]]", "", self.sent_cand))))
         self.sent_cand = self.sent_cand + self.curr_sent
+        self.num_cand.extend(reversed(rev_curr_num))
 
-    def push_sentence(self, sent: str) -> bool:
+    def push_sentence(self, sent: str, prefix_suffix: bool) -> bool:
         """
         """
+        self.sent = self.sent + sent
         self.curr_sent = sent
         if (
             not self.curr_tag.sentence_in(sent)
@@ -268,6 +303,9 @@ class CandidateSentenceParser:
         ):
             return False
         self.find()
+        if prefix_suffix:
+            self.filter_prefix_suffix()
+        self.remove_num()
         self.parse()
         self.curr_sent = None
         self.curr_num = []
