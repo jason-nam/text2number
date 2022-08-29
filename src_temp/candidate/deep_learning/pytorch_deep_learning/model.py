@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torchcrf import CRF
+from TorchCRF import CRF
 
 from utils import get_labels
 

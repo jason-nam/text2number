@@ -5,7 +5,6 @@ import logging
 from collections import Counter
 import json
 
-import gdown
 import torch
 import numpy as np
 from seqeval.metrics import precision_score, recall_score, f1_score, classification_report
