@@ -10,6 +10,9 @@ def main(args, sent):
     logging.disable(logging.CRITICAL)
     warnings.filterwarnings("ignore")
 
+    print(sent)
+    print("pytorch: ", len(sent))
+
     init_logger()
     # if not args.no_w2v:
     #     download_w2v(args)

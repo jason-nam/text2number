@@ -9,16 +9,48 @@ def parse_result(sent, infer_tag):
     num_key = ""
     num_ind = None
     num = []
+    # print(len(infer_tag))
+    # print(len(sent))
+    # print(infer_tag)
+    # print(sent)
     for i, c in enumerate(sent):
-        if infer_tag[i] == "B":
+        if (
+            infer_tag[i] == "B" 
+            and i == len(sent) - 1
+        ):
+            infer_sent = infer_sent + "[" + c + "]"
+            num_ind = i
+            num_key = num_key + c
+            num.append((num_key, num_ind))
+        elif (
+            infer_tag[i] == "I" 
+            and i == len(sent) - 1
+        ):
+            infer_sent = infer_sent + c + "]"
+            num_key = num_key + c
+            num.append((num_key, num_ind))
+        elif (
+            i != 0
+            and infer_tag[i] == "B" 
+            and infer_tag[i-1] == "I"
+        ):
+            infer_sent = infer_sent + "]" + "[" + c
+            num.append((num_key, num_ind))
+            num_key = c
+            num_ind = i
+        elif infer_tag[i] == "B":
             infer_sent = infer_sent + "[" + c
             num_ind = i
             num_key = num_key + c
-        elif not i == 0 and infer_tag[i] == "O" and infer_tag[i-1] == "I":
+        elif (
+            not i == 0 
+            and infer_tag[i] == "O" 
+            and infer_tag[i-1] in ("B", "I")
+        ):
             infer_sent = infer_sent + "]" + c
             num.append((num_key, num_ind))
             num_key = ""
-            num_key = None
+            num_ind = None
         elif infer_tag[i] == "I":
             infer_sent = infer_sent + c
             num_key = num_key + c
@@ -27,7 +59,7 @@ def parse_result(sent, infer_tag):
     return infer_sent, num
 
 
-def deep_candidate(sent: str) -> Tuple[str, List[Tuple[str, int]]]:
+def deep_candidate(sent: str):
     
     parser = argparse.ArgumentParser()
 
@@ -44,7 +76,7 @@ def deep_candidate(sent: str) -> Tuple[str, List[Tuple[str, int]]]:
     parser.add_argument("--w2v_file", default="word_vector_300d.vec", type=str, help="Pretrained word vector file")
     parser.add_argument("--write_pred", action="store_true", help="Write prediction during evaluation")
 
-    parser.add_argument("--max_seq_len", default=50, type=int, help="Max sentence length")
+    parser.add_argument("--max_seq_len", default=250, type=int, help="Max sentence length")
     parser.add_argument("--max_word_len", default=10, type=int, help="Max word length")
     parser.add_argument("--word_vocab_size", default=100000, type=int, help="Maximum size of word vocabulary")
     parser.add_argument("--char_vocab_size", default=1000, type=int, help="Maximum size of character vocabulary")

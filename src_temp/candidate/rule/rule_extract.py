@@ -24,7 +24,7 @@ def split(sent: str) -> Iterator[str]:
     yield sent[sentence_start_index:]
 
 
-def rule_candidate(sent: str, prefix_suffix: bool = False) -> Tuple[str, List[Tuple[str, int]]]:
+def rule_candidate(sent: str, prefix_suffix: bool = False):
     """
     """
     sent_parser = CandidateSentenceParser()

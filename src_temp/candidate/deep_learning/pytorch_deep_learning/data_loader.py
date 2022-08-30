@@ -111,7 +111,7 @@ class NaverNerProcessor(object):
             file_to_read = self.args.infer_file
             # return self._create_examples(get_infer_dataset(self._read_file(os.path.join(self.args.data_dir, file_to_read))), mode)
             # print([sent.strip()])
-            return self._create_examples(get_infer_dataset([sent.strip()]), mode)
+            return self._create_examples(get_infer_dataset([sent]), mode)
             
         logger.info("LOOKING AT {}".format(os.path.join(self.args.data_dir, file_to_read)))
         return self._create_examples((self._read_file(os.path.join(self.args.data_dir, file_to_read))), mode)
