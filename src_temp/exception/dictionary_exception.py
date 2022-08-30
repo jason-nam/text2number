@@ -1,17 +1,18 @@
-
 import os
-from util import *
-from typing  import Dict
+from typing  import Dict, Any
+
+from .exception_util import load_dictionary
+
 _dir = os.path.dirname(os.path.abspath(__file__))
-nl_dict_path = os.path.join(_dir, '../../resource/new_languages.txt')
-ew_dict_path = os.path.join(_dir, '../../resource/error_words.txt')
+nl_dict_path = os.path.join(_dir, 'resource/new_word.txt')
+ew_dict_path = os.path.join(_dir, 'resource/error_word.txt')
 
 NEW_LANGUAGE: Dict[str, str] = load_dictionary(nl_dict_path)
 ERROR_WORDS: Dict[str, str] = load_dictionary(ew_dict_path)
 
 def apply_dictionary(sentence: str) -> str:
     if not any(
-        dictionary_key in sentence 
+        dictionary_key in sentence
         for dictionary_key in NEW_LANGUAGE
     ):
         return sentence

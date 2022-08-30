@@ -1,30 +1,22 @@
-from candidate import candidate_extract
-from text_to_num import text2num
-# from exception import (
-#     apply_dictionary,
-#     revert_error_words,
-#     get_month_exception,
-#     convert_regular_expression,
-#     revert_regular_expression,
-#     convert_text_regular_expression,
-# )
+"""
+Test the ``rule`` library.
+"""
+from unittest import TestCase, main
+import os, sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-def parse_sent(sent, cand_num, conv_num):
-    for num_id, (num, ind) in reversed(list(enumerate(cand_num))):
-        sent = sent[:ind] + str(conv_num[num_id]) + sent[ind + len(num):]
-    return sent
+from src_temp.candidate import candidate_extract
 
-def main(sent: str) -> None:
-    cand_sent, cand_num = candidate_extract(sent)
-    # print(cand_sent, cand_num)
 
-    conv_num = list()
-    for num, ind in cand_num:
-        try:
-            conv_num.append(text2num(num, "kr"))
-        except:
-            conv_num.append(num)
-    return parse_sent(sent, cand_num, conv_num)
+class TestCandidateExtractFromSentence(TestCase):
+    def test_candidate_extract(self):
+        sent2 = "어 전체 확진자의 구십구점오프로는 무증상 경증의 재택 치료자분들입니다 대면 진료나 목내 처방을 받는데 불편함이 없도록 이십사시간 의료상담과 대응체계를 구축하겠습니다."
+        out2 = (
+            "어 전체 확진자의 [구십구]점[오]프로는 무증상 경증의 재택 치료자분들입니다 대면 진료나 목내 처방을 받는데 불편함이 없도록 [이십사]시간 의료상담과 대응체계를 구축하겠습니다.",
+            [('구십구', 10), ('오', 14), ('이십사', 66)]
+        )
+        self.assertEqual(candidate_extract(sent2), out2)
+
 
 if __name__ == "__main__":
     text = [
@@ -89,4 +81,5 @@ if __name__ == "__main__":
         "오점이야",
     ]
     for item in text:
-        print(main(item))
+        print(candidate_extract(item))
+    main()

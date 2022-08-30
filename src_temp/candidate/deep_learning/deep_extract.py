@@ -9,10 +9,6 @@ def parse_result(sent, infer_tag):
     num_key = ""
     num_ind = None
     num = []
-    # print(len(infer_tag))
-    # print(len(sent))
-    # print(infer_tag)
-    # print(sent)
     for i, c in enumerate(sent):
         if (
             infer_tag[i] == "B" 
@@ -22,6 +18,21 @@ def parse_result(sent, infer_tag):
             num_ind = i
             num_key = num_key + c
             num.append((num_key, num_ind))
+        elif (
+            infer_tag[i] == "I"
+            and i == 0
+        ):
+            infer_sent = infer_sent + "[" + c
+            num_ind = i
+            num_key = num_key + c
+        elif (
+            i != 0
+            and infer_tag[i] == "I"
+            and infer_tag[i-1] == "O"
+        ):
+            infer_sent = infer_sent + "[" + c
+            num_ind = i
+            num_key = num_key + c
         elif (
             infer_tag[i] == "I" 
             and i == len(sent) - 1

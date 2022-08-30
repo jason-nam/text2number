@@ -1,4 +1,5 @@
 from typing import Any, Dict, List
+import os
 
 def load_dictionary(path: str) -> Dict[Any, Any]:
     """

@@ -2,6 +2,7 @@ import os
 import copy
 import json
 import logging
+from typing import Optional
 
 import numpy as np
 
@@ -95,7 +96,7 @@ class NaverNerProcessor(object):
             examples.append(InputExample(guid=guid, words=words, labels=labels))
         return examples
 
-    def get_examples(self, mode, sent):
+    def get_examples(self, mode, sent: Optional[str] = None):
         """
         Args:
             mode: train, dev, test
@@ -110,7 +111,6 @@ class NaverNerProcessor(object):
         elif mode == "infer":
             file_to_read = self.args.infer_file
             # return self._create_examples(get_infer_dataset(self._read_file(os.path.join(self.args.data_dir, file_to_read))), mode)
-            # print([sent.strip()])
             return self._create_examples(get_infer_dataset([sent]), mode)
             
         logger.info("LOOKING AT {}".format(os.path.join(self.args.data_dir, file_to_read)))

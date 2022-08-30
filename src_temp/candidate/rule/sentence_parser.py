@@ -280,6 +280,9 @@ class CandidateSentenceParser:
                     remove_num = False
             if not remove_num:
                 filtered_num.append((num, ind))
+            # else:
+            #     print("prefix suffix flag")
+            #     print(num)
         self.curr_num = filtered_num
 
     def parse(self) -> None:

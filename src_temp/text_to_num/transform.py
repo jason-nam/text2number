@@ -6,7 +6,6 @@ from .lang import LANG, Language, Korean
 from .num_parser import (
     WordStreamValueParserInterface,
     WordStreamValueParserAsian, 
-    WordToDigitParser,
 )
 
 def look_ahead(sequence: Sequence[Any]) -> Iterator[Tuple[Any, Any]]:
