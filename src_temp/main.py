@@ -9,14 +9,9 @@ from text_to_num import text2num
 #     convert_text_regular_expression,
 # )
 
-def parse_sent(sent, cand_num, conv_num):
-    for num_id, (num, ind) in reversed(list(enumerate(cand_num))):
-        sent = sent[:ind] + str(conv_num[num_id]) + sent[ind + len(num):]
-    return sent
-
 def main(sent: str) -> None:
     cand_sent, cand_num = candidate_extract(sent)
-    # print(cand_sent, cand_num)
+    regex_sent, regex_num = 
 
     conv_num = list()
     for num, ind in cand_num:
@@ -24,7 +19,10 @@ def main(sent: str) -> None:
             conv_num.append(text2num(num, "kr"))
         except:
             conv_num.append(num)
-    return parse_sent(sent, cand_num, conv_num)
+
+    for num_id, (num, ind) in reversed(list(enumerate(cand_num))):
+        sent = sent[:ind] + str(conv_num[num_id]) + sent[ind + len(num):]
+    return sent
 
 if __name__ == "__main__":
     text = [
