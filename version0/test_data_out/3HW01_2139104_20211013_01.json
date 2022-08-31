@@ -1,0 +1,142 @@
+[
+	{
+		"id": "1",
+		"input": "성원이 되었으므로 제삼백구십일 회 국회정기회 제사 차 보건복지위원회를 개회하겠습니다. {banging}",
+		"output": "성원이 되었으므로 제 391회 국회정기회 제4차 보건복지위원회를 개회하겠습니다. {banging}",
+		"isChange": 1,
+		"word": [
+			"삼백구십일",
+			"사"
+		],
+		"digit": [
+			"391",
+			"4"
+		],
+		"new_output": "성원이 되었으므로 제391 회 국회정기회 제4 차 보건복지위원회를 개회하겠습니다. {banging}",
+		"new_isChange": 1,
+		"new_word": [
+			"삼백구십일",
+			"사"
+		],
+		"new_digit": [
+			"391",
+			"4"
+		]
+	},
+	{
+		"id": "2",
+		"input": "아~ 오늘 회의는 국정감사와 관련해서 의결이 필요한 사항을 처리하기 위한 것입니다.",
+		"output": "아~ 오늘 회의는 국정감사와 관련해서 의결이 필요한 사항을 처리하기 위한 것입니다.",
+		"isChange": 0,
+		"word": [],
+		"digit": [],
+		"new_output": "아~ 오늘 회의는 국정감사와 관련해서 의결이 필요한 사항을 처리하기 위한 것입니다.",
+		"new_isChange": 0,
+		"new_word": [],
+		"new_digit": []
+	},
+	{
+		"id": "3",
+		"input": "의사일정 제일 항 이천이십일 년도 국정감사 참고인 출석요구 추가의 건을 상정합니다. {banging}",
+		"output": "의사일정 제1 항 2021년도 국정감사 참고인 출석요구 추가의 건을 상정합니다. {banging}",
+		"isChange": 1,
+		"word": [
+			"일",
+			"이천이십일"
+		],
+		"digit": [
+			"1",
+			"2021"
+		],
+		"new_output": "의사일정 제1 항 2021 년도 국정감사 참고인 출석요구 추가의 건을 상정합니다. {banging}",
+		"new_isChange": 1,
+		"new_word": [
+			"일",
+			"이천이십일"
+		],
+		"new_digit": [
+			"1",
+			"2021"
+		]
+	},
+	{
+		"id": "4",
+		"input": "이 안건은 위원장과 간사 간 협의를 통해서 참고인을 추가해서 출석요구 하고자 하려는 것입니다.",
+		"output": "이 안건은 위원장과 간사 간 협의를 통해서 참고인을 추가해서 출석요구 하고자 하려는 것입니다.",
+		"isChange": 0,
+		"word": [],
+		"digit": [],
+		"new_output": "이 안건은 위원장과 간사 간 협의를 통해서 참고인을 추가해서 출석요구 하고자 하려는 것입니다.",
+		"new_isChange": 0,
+		"new_word": [],
+		"new_digit": []
+	},
+	{
+		"id": "5",
+		"input": "아 유인물을 참고하시고요.",
+		"output": "아 유인물을 참고하시고요.",
+		"isChange": 0,
+		"word": [],
+		"digit": [],
+		"new_output": "아 유인물을 참고하시고요.",
+		"new_isChange": 0,
+		"new_word": [],
+		"new_digit": []
+	},
+	{
+		"id": "6",
+		"input": "이천이십일 년도 국정감사 참고인 출석요구 추가의 건을 의결하고자 합니다.",
+		"output": "2021년도 국정감사 참고인 출석요구 추가의 건을 의결하고자 합니다.",
+		"isChange": 1,
+		"word": [
+			"이천이십일"
+		],
+		"digit": [
+			"2021"
+		],
+		"new_output": "2021 년도 국정감사 참고인 출석요구 추가의 건을 의결하고자 합니다.",
+		"new_isChange": 1,
+		"new_word": [
+			"이천이십일"
+		],
+		"new_digit": [
+			"2021"
+		]
+	},
+	{
+		"id": "7",
+		"input": "이의 없으시지요?",
+		"output": "이의 없으시지요?",
+		"isChange": 0,
+		"word": [],
+		"digit": [],
+		"new_output": "이의 없으시지요?",
+		"new_isChange": 0,
+		"new_word": [],
+		"new_digit": []
+	},
+	{
+		"id": "8",
+		"input": "네 가결되었음을 선포합니다. {banging}",
+		"output": "네 가결되었음을 선포합니다. {banging}",
+		"isChange": 0,
+		"word": [],
+		"digit": [],
+		"new_output": "네 가결되었음을 선포합니다. {banging}",
+		"new_isChange": 0,
+		"new_word": [],
+		"new_digit": []
+	},
+	{
+		"id": "9",
+		"input": "잠시 정회하겠습니다. {banging}",
+		"output": "잠시 정회하겠습니다. {banging}",
+		"isChange": 0,
+		"word": [],
+		"digit": [],
+		"new_output": "잠시 정회하겠습니다. {banging}",
+		"new_isChange": 0,
+		"new_word": [],
+		"new_digit": []
+	}
+]
