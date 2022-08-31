@@ -29,12 +29,10 @@ def exceptionNR(nr_list: list):
     return copy
 
 def List_Loader():
-    with open(os.path.join(_dir, '../../resource/nnbc.json'),"r",encoding="UTF-8-sig") as json_file:
-        suffix_list = json.load(json_file)
-    prefix_list = list()
-    with open(os.path.join(_dir, '../../resource/prefix.txt'),"r",encoding = "UTF-8") as txt:
-        for line in txt.readlines():
-            prefix_list.append(line.strip())
+    with open(os.path.join(_dir, '../../resource/suffix.json'),"r",encoding="UTF-8-sig") as suffix_json_file:
+        suffix_list = json.load(suffix_json_file)
+    with open(os.path.join(_dir, '../../resource/prefix.json'),"r",encoding = "UTF-8") as prefix_json_file:
+        prefix_list = json.load(prefix_json_file)
     return prefix_list,suffix_list
 
 def CheckAffix(sentence,num_list):
@@ -153,6 +151,7 @@ def PutNumber(sentence: str, sentence_pos: list) -> str:
     """문장input에 digit대입한 문장output return"""
 
     numList = remove_bad_words(BringNumber(sentence, sentence_pos))
+
     #print(numbers)
     result = ''
     ind_in_sentence = 0
