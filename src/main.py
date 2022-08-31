@@ -36,7 +36,7 @@ def arabic_to_hangeul_parser(final_num):
             hangeul_num = ""
             for mult in reversed(MULTIPLIERS):
                 mtenthousands = (arabic_num // mult) % 1_0000
-                if mtenthousands != 0:
+                if mtenthousands != 0 and mtenthousands != 1:
                     hangeul_num = hangeul_num + str(mtenthousands) + MULTIPLIERS[mult]
             hangeul_num_list.append(hangeul_num)
         except:
